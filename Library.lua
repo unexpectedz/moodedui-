@@ -4768,204 +4768,11 @@ Items.TabButtons = Library:Create( "Frame" , {
                 
                 Cfg.Callback()
             end)
-            
+
 return setmetatable(Cfg, Library)
         end
 
-function Library:SubSection(properties)
-            local Cfg = {
-                Tabs = properties.Tabs or {"Tab1"};
-                Side = properties.side or properties.Side or "Left";
-                Size = properties.size or properties.Size or nil;
-                Items = {};
-                Store = {};
-                TabInfo = nil;
-            }
-
-            local Items = Cfg.Items; do
-                Items.Wrapper = Library:Create("Frame", {
-                    Parent = self.Items.Left or self.Items.Right or self.Items.Elements or self.Items.Page;
-                    Name = "\0";
-                    Size = dim2(1, 0, Cfg.Size or 0, 0);
-                    BorderColor3 = rgb(0,0,0);
-                    BorderSizePixel = 0;
-                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
-                    BackgroundColor3 = themes.preset.outline;
-                }); Library:Themify(Items.Wrapper, "outline", "BackgroundColor3")
-
-Items.TabBar = Library:Create("Frame", {
-                    Parent = Items.Wrapper;
-                    Name = "\0";
-                    Position = dim2(0,1,0,1);
-                    Size = dim2(1,-2,0,24);
-                    BorderColor3 = rgb(0,0,0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset.gradient;
-                }); Library:Themify(Items.TabBar, "gradient", "BackgroundColor3")
-
-                -- accent line at BOTTOM of sub-tab bar
-                Items.AccentLine = Library:Create("Frame", {
-                    Parent = Items.TabBar;
-                    Name = "\0";
-                    AnchorPoint = vec2(0,1);
-                    Position = dim2(0,0,1,0);
-                    Size = dim2(1,0,0,1);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset.outline;
-                }); Library:Themify(Items.AccentLine, "outline", "BackgroundColor3")
-
-                Items.TabButtons = Library:Create("Frame", {
-                    Parent = Items.TabBar;
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Size = dim2(1,0,1,0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(255,255,255);
-                });
-
-                Library:Create("UIListLayout", {
-                    Parent = Items.TabButtons;
-                    FillDirection = Enum.FillDirection.Horizontal;
-                    SortOrder = Enum.SortOrder.LayoutOrder;
-                    Padding = dim(0,0);
-                });
-
-                Library:Create("UIPadding", {
-                    Parent = Items.TabButtons;
-                    PaddingTop = dim(0,3);
-                    PaddingLeft = dim(0,2);
-                });
-
-Items.ContentArea = Library:Create("Frame", {
-                    Parent = Items.Wrapper;
-                    Name = "\0";
-                    Position = dim2(0,1,0,26);
-                    Size = dim2(1,-2, Cfg.Size and 1 or 0, Cfg.Size and -23 or 0);
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = 1;
-                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
-                    BackgroundColor3 = themes.preset.background;
-                });
-
-                Library:Create("UIPadding", {
-                    Parent = Items.ContentArea;
-                    PaddingBottom = dim(0,4);
-                });
-            end
-
-            for _, tabName in Cfg.Tabs do
-                local Data = {Items = {}}
-                local SubItems = Data.Items
-
-                SubItems.Btn = Library:Create("TextButton", {
-                    Parent = Items.TabButtons;
-                    Name = "\0";
-                    Size = dim2(0,0,1,0);
-                    AutomaticSize = Enum.AutomaticSize.X;
-                    AutoButtonColor = false;
-                    Text = "";
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(255,255,255);
-                    BackgroundTransparency = 1;
-                });
-
-local labelTransparency = 0
-                if Cfg.TabInfo ~= nil then
-                    labelTransparency = 1
-                end
-
-                SubItems.Label = Library:Create("TextLabel", {
-                    Parent = SubItems.Btn;
-                    Name = "\0";
-                    Text = tabName;
-                    FontFace = Library.Font;
-                    TextSize = 12;
-                    TextColor3 = themes.preset.text_color;
-                    BackgroundTransparency = labelTransparency;
-                    BackgroundColor3 = themes.preset.tab_background;
-                    AutomaticSize = Enum.AutomaticSize.XY;
-                    Size = dim2(0,0,1,0);
-                    BorderSizePixel = 0;
-                    BorderColor3 = rgb(0,0,0);
-                }); 
-                
-                if SubItems.Label then
-                    Library:Themify(SubItems.Label, "tab_background", "BackgroundColor3")
-                end
-
-                Library:Create("UIPadding", {
-                    Parent = SubItems.Label;
-                    PaddingLeft = dim(0,6);
-                    PaddingRight = dim(0,6);
-                });
-
-                Library:Create("UIStroke", {
-                    Parent = SubItems.Label;
-                    LineJoinMode = Enum.LineJoinMode.Miter;
-                });
-
-SubItems.Indicator = Library:Create("Frame", {
-                    Parent = SubItems.Btn;
-                    Name = "\0";
-                    AnchorPoint = vec2(0,0);
-                    Position = dim2(0,0,0,0);
-                    Size = dim2(1,0,0,2);
-                    ZIndex = 3;
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = Cfg.TabInfo and 1 or 0;
-                    BackgroundColor3 = themes.preset.accent;
-                }); Library:Themify(SubItems.Indicator, "accent", "BackgroundColor3")
-
-                SubItems.Elements = Library:Create("Frame", {
-                    Parent = Library.Other;
-                    Name = "\0";
-                    Visible = false;
-                    BackgroundTransparency = 1;
-                    Size = dim2(1,-12,0,0);
-                    Position = dim2(0,6,0,6);
-                    BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.Y;
-                    BackgroundColor3 = rgb(255,255,255);
-                });
-
-                Library:Create("UIListLayout", {
-                    Parent = SubItems.Elements;
-                    Padding = dim(0,4);
-                    SortOrder = Enum.SortOrder.LayoutOrder;
-                });
-
-                function Data.OpenTab()
-                    local Cache = Cfg.TabInfo
-                    if Cache then
-                        Library:Tween(Cache.Indicator, {BackgroundTransparency = 1})
-                        Library:Tween(Cache.Label, {BackgroundTransparency = 0})
-                        Cache.Elements.Visible = false
-                        Cache.Elements.Parent = Library.Other
-                    end
-                    Library:Tween(SubItems.Indicator, {BackgroundTransparency = 0})
-                    Library:Tween(SubItems.Label, {BackgroundTransparency = 1})
-                    SubItems.Elements.Parent = Items.ContentArea
-                    SubItems.Elements.Visible = true
-                    Cfg.TabInfo = SubItems
-                end
-
-                SubItems.Btn.MouseButton1Down:Connect(function()
-                    Data.OpenTab()
-                end)
-
-                if not Cfg.TabInfo then
-                    Data.OpenTab()
-                end
-
-                Data.Items.GroupElements = nil
-
-                Cfg.Store[#Cfg.Store + 1] = setmetatable(Data, Library)
-            end
-
-            return unpack(Cfg.Store)
-        end
-
-function Library:SubSection(properties)
+        function Library:SubSection(properties)
             local Cfg = {
                 Tabs = properties.Tabs or {"Tab1"};
                 Side = properties.side or properties.Side or "Left";
@@ -4975,7 +4782,6 @@ function Library:SubSection(properties)
             }
 
             local parentFrame = self.Items[Cfg.Side]
-
             local Items = Cfg.Items
 
             Items.Wrapper = Library:Create("Frame", {
@@ -5049,7 +4855,6 @@ function Library:SubSection(properties)
             for _, tabName in Cfg.Tabs do
                 local Data = {Items = {}}
                 local SubItems = Data.Items
-
                 local isFirst = Cfg.TabInfo == nil
 
                 SubItems.Btn = Library:Create("TextButton", {
@@ -5064,12 +4869,11 @@ function Library:SubSection(properties)
                     BackgroundTransparency = 1;
                 })
 
-                local bgTransp = isFirst and 1 or 0
                 SubItems.Label = Instance.new("TextLabel")
                 SubItems.Label.FontFace = Library.Font
                 SubItems.Label.TextSize = 12
                 SubItems.Label.TextColor3 = themes.preset.text_color
-                SubItems.Label.BackgroundTransparency = bgTransp
+                SubItems.Label.BackgroundTransparency = isFirst and 1 or 0
                 SubItems.Label.BackgroundColor3 = themes.preset.tab_background
                 SubItems.Label.AutomaticSize = Enum.AutomaticSize.XY
                 SubItems.Label.Size = dim2(0,0,1,0)
@@ -5091,7 +4895,6 @@ function Library:SubSection(properties)
                 stroke.LineJoinMode = Enum.LineJoinMode.Miter
                 stroke.Parent = SubItems.Label
 
-                local indTransp = isFirst and 0 or 1
                 SubItems.Indicator = Library:Create("Frame", {
                     Parent = SubItems.Btn;
                     Name = "\0";
@@ -5100,7 +4903,7 @@ function Library:SubSection(properties)
                     Size = dim2(1,0,0,2);
                     ZIndex = 3;
                     BorderSizePixel = 0;
-                    BackgroundTransparency = indTransp;
+                    BackgroundTransparency = isFirst and 0 or 1;
                     BackgroundColor3 = themes.preset.accent;
                 }); Library:Themify(SubItems.Indicator, "accent", "BackgroundColor3")
 
@@ -5146,307 +4949,6 @@ function Library:SubSection(properties)
                 end
 
                 Data.Items.GroupElements = nil
-
-                Cfg.Store[#Cfg.Store + 1] = setmetatable(Data, Library)
-            end
-
-            return unpack(Cfg.Store)
-        end
-
-        function Library:Configs(window)
-        function Library:Configs(window)
-            local Text;
-            local ConfigText; 
-
-            local Tab = window:Tab({Name = "Settings"})
-
-            local Section = Tab:Section({Name = "Main", Side = "Left"})
-            ConfigHolder = Section:Dropdown({Name = "Configs", Options = {"Report", "This", "Error", "To", "Finobe"}, Callback = function(option) if Text then Text.Set(option) end end, Flag = "config_Name_list"}); Library:UpdateConfigList()
-            window.Tweening = true
-            Text = Section:Textbox({Name = "Config Name:", Flag = "config_Name_text", Callback = function(text)
-                ConfigText = text
-            end})
-            window.Tweening = false
-            Section:Button({Name = "Save", Callback = function() 
-                writefile(Library.Directory .. "/configs/" .. ConfigText .. ".cfg", Library:GetConfig())
-                Library:UpdateConfigList()
-                Notifications:Create({Name = "Saved Config (" ..  Library.Directory .. "/configs/" .. ConfigText .. ".cfg" .. ")"}) 
-            end})
-
-            Section:Button({Name = "Load", Callback = function() 
-                Library:LoadConfig(readfile(Library.Directory .. "/configs/" .. ConfigText .. ".cfg"))  
-                Library:UpdateConfigList() 
-                Notifications:Create({Name = "Loaded Config (" ..  Library.Directory .. "/configs/" .. ConfigText .. ".cfg" .. ")"}) 
-            end})
-
-            Section:Button({Name = "Delete", Callback = function() 
-                delfile(Library.Directory .. "/configs/" .. ConfigText .. ".cfg")  
-                Library:UpdateConfigList() 
-                Notifications:Create({Name = "Deleted Config (" ..  Library.Directory .. "/configs/" .. ConfigText .. ".cfg" .. ")"}) 
-            end})
-
-            window.Tweening = true
-            Section:Label({Name = "Menu Bind"}):Keybind({Name = "Menu Bind", ShowInList = false, Callback = function(bool) 
-                if window.Tweening then
-                    return 
-                end 
-
-                window.ToggleMenu(bool) 
-            end, Default = true})
-
-            delay(2, function() window.Tweening = false end)
-
-            local Section = Tab:Section({Name = "Other", Side = "Right"})
-            Section:Toggle({Name = "Watermark", Flag = "Watermark", Callback = window.ToggleWatermark})
-            Section:Toggle({Name = "Keybind List", Flag = "KeybindList", Callback = window.ToggleKeybindList})
-            Section:Toggle({Name = "Toggle Status", Flag = "Status", Callback = window.ToggleStatus})
-            Section:Textbox({Name = "Custom Menu Name", Callback = window.ChangeTitle, Default = window.Name, Placeholder = "Title name here..."})
-            Section:Textbox({Name = "Custom Watermark Name", Callback = window.ChangeWatermarkTitle, Default = window.Name .. ".lua", Placeholder = "Title name here..."})
-            Section:Dropdown({Name = "Tweening Style", Options = {"Linear", "Sine", "Back", "Quad", "Quart", "Quint", "Bounce", "Elastic", "Exponential", "Circular", "Cubic"}, Flag = "LibraryEasingStyle", Default = "Quint", Callback = function(Option)
-                Library.EasingStyle = Enum.EasingStyle[Option]
-            end});
-            Section:Slider({Name = "Tweening Speed", Min = 0, Max = 10, Decimal = 0.01, Suffix = "s", Default = 0.25, Flag = "TweeningSpeed", Callback = function(int)
-                Library.TweeningSpeed = int
-            end})
-
-            Section:Label({Name = "Inline"}):Colorpicker({Flag = "Inline", Callback = function(color, alpha) 
-                Library:RefreshTheme("inline", color) 
-
-                for _,seq in themes.gradients.Selected do 
-                    seq.Color = rgbseq{rgbkey(0, themes.preset.inline), rgbkey(1, themes.preset.gradient)}
-                end 
-            end, Color = themes.preset.inline})
-
-            Section:Label({Name = "Gradient"}):Colorpicker({Flag = "Gradient", Callback = function(color, alpha) 
-                Library:RefreshTheme("gradient", color)
-
-                for _,seq in themes.gradients.Selected do 
-                    seq.Color = rgbseq{rgbkey(0, themes.preset.inline), rgbkey(1, themes.preset.gradient)}
-                end
-
-                for _,seq in themes.gradients.Deselected do 
-                    seq.Color = rgbseq{rgbkey(0, themes.preset.gradient), rgbkey(1, themes.preset.background)}
-                end
-            end, Color = themes.preset.gradient})
-            
-            Section:Label({Name = "Outline"}):Colorpicker({Flag = "Outline", Callback = function(color, alpha) 
-                Library:RefreshTheme("outline", color) 
-            end, Color = themes.preset.outline})
-            
-            Section:Label({Name = "Accent"}):Colorpicker({Flag = "Accent", Callback = function(color, alpha) 
-                Library:RefreshTheme("accent", color) 
-            end, Color = themes.preset.accent})
-            
-            Section:Label({Name = "Background"}):Colorpicker({Flag = "Background", Callback = function(color, alpha) 
-                Library:RefreshTheme("background", color) 
-
-                for _,seq in themes.gradients.Deselected do 
-                    seq.Color = rgbseq{rgbkey(0, themes.preset.gradient), rgbkey(1, themes.preset.background)}
-                end
-            end, Color = themes.preset.background})
-            
-            Section:Label({Name = "Text Color"}):Colorpicker({Flag = "Text Color", Callback = function(color, alpha) 
-                Library:RefreshTheme("text_color", color) 
-            end, Color = themes.preset.text_color})
-            
-            Section:Label({Name = "Text Outline"}):Colorpicker({Flag = "Text Outline", Callback = function(color, alpha) 
-                Library:RefreshTheme("text_outline", color) 
-            end, Color = themes.preset.text_outline})
-            
-            Section:Label({Name = "Background"}):Colorpicker({Flag = "Background", Callback = function(color, alpha) 
-                Library:RefreshTheme("tab_background", color) 
-            end, Color = themes.preset.tab_background})
-            
-            
-
-        end
-    --
-
-function Library:SubSection(properties)
-            local Cfg = {
-                Tabs = properties.Tabs or {"Tab1"};
-                Side = properties.side or properties.Side or "Left";
-                Size = properties.size or properties.Size or nil;
-                Items = {};
-                Store = {};
-                TabInfo = nil;
-            }
-
-            local Items = Cfg.Items; do
-                Items.Wrapper = Library:Create("Frame", {
-                    Parent = self.Items[Cfg.Side];
-                    Name = "\0";
-                    Size = dim2(1, 0, Cfg.Size or 0, 0);
-                    BorderColor3 = rgb(0,0,0);
-                    BorderSizePixel = 0;
-                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
-                    BackgroundColor3 = themes.preset.outline;
-                }); Library:Themify(Items.Wrapper, "outline", "BackgroundColor3")
-
-                -- Sub-tab bar at top
-                Items.TabBar = Library:Create("Frame", {
-                    Parent = Items.Wrapper;
-                    Name = "\0";
-                    Position = dim2(0,1,0,1);
-                    Size = dim2(1,-2,0,20);
-                    BorderColor3 = rgb(0,0,0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset.gradient;
-                }); Library:Themify(Items.TabBar, "gradient", "BackgroundColor3")
-
-                Items.AccentLine = Library:Create("Frame", {
-                    Parent = Items.TabBar;
-                    Name = "\0";
-                    AnchorPoint = vec2(0,1);
-                    Position = dim2(0,0,1,0);
-                    Size = dim2(1,0,0,1);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset.accent;
-                }); Library:Themify(Items.AccentLine, "accent", "BackgroundColor3")
-
-                Items.TabButtons = Library:Create("Frame", {
-                    Parent = Items.TabBar;
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Size = dim2(1,0,1,0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(255,255,255);
-                });
-
-                Library:Create("UIListLayout", {
-                    Parent = Items.TabButtons;
-                    FillDirection = Enum.FillDirection.Horizontal;
-                    SortOrder = Enum.SortOrder.LayoutOrder;
-                    Padding = dim(0,0);
-                });
-
-if SubItems.Label then
-                    Library:Create("UIPadding", {
-                        Parent = SubItems.Label;
-                        PaddingLeft = dim(0,8);
-                        PaddingRight = dim(0,8);
-                        PaddingTop = dim(0,2);
-                        PaddingBottom = dim(0,2);
-                    });
-                end
-
-                -- Scrollable content area
-                Items.ContentArea = Library:Create("ScrollingFrame", {
-                    Parent = Items.Wrapper;
-                    Name = "\0";
-                    Position = dim2(0,1,0,22);
-                    Size = dim2(1,-2, Cfg.Size and 1 or 0, Cfg.Size and -23 or 0);
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = 1;
-                    AutomaticCanvasSize = Enum.AutomaticSize.Y;
-                    CanvasSize = dim2(0,0,0,0);
-                    ScrollBarThickness = 2;
-                    ScrollBarImageColor3 = themes.preset.accent;
-                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
-                    BackgroundColor3 = themes.preset.background;
-                }); Library:Themify(Items.ContentArea, "accent", "ScrollBarImageColor3")
-            end
-
-            for _, tabName in Cfg.Tabs do
-                local Data = {Items = {}}
-                local SubItems = Data.Items
-
-                SubItems.Btn = Library:Create("TextButton", {
-                    Parent = Items.TabButtons;
-                    Name = "\0";
-                    Size = dim2(0,0,1,0);
-                    AutomaticSize = Enum.AutomaticSize.X;
-                    AutoButtonColor = false;
-                    Text = "";
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(255,255,255);
-                    BackgroundTransparency = 1;
-                });
-
-SubItems.Label = Library:Create("TextLabel", {
-                    Parent = SubItems.Btn;
-                    Name = "\0";
-                    Text = tabName;
-                    FontFace = Library.Font;
-                    TextSize = 12;
-                    TextColor3 = themes.preset.text_color;
-                    BackgroundTransparency = (Cfg.TabInfo == nil) and 0 or 1;
-                    BackgroundColor3 = themes.preset.tab_background;
-                    AutomaticSize = Enum.AutomaticSize.XY;
-                    Size = dim2(0,0,1,0);
-                    BorderSizePixel = 0;
-                    BorderColor3 = rgb(0,0,0);
-                }); Library:Themify(SubItems.Label, "tab_background", "BackgroundColor3")
-
-                Library:Create("UIPadding", {
-                    Parent = SubItems.Label;
-                    PaddingLeft = dim(0,6);
-                    PaddingRight = dim(0,6);
-                });
-
-                Library:Create("UIStroke", {
-                    Parent = SubItems.Label;
-                    LineJoinMode = Enum.LineJoinMode.Miter;
-                });
-
-                SubItems.Indicator = Library:Create("Frame", {
-                    Parent = SubItems.Btn;
-                    Name = "\0";
-                    AnchorPoint = vec2(0,1);
-                    Position = dim2(0,0,1,1);
-                    Size = dim2(1,0,0,1);
-                    ZIndex = 3;
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = (Cfg.TabInfo ~= nil) and 1 or 0;
-                    BackgroundColor3 = themes.preset.accent;
-                }); Library:Themify(SubItems.Indicator, "accent", "BackgroundColor3")
-
-                -- Each tab's element frame lives inside ContentArea
-                SubItems.Elements = Library:Create("Frame", {
-                    Parent = Library.Other;
-                    Name = "\0";
-                    Visible = false;
-                    BackgroundTransparency = 1;
-                    Size = dim2(1,-12,0,0);
-                    Position = dim2(0,6,0,6);
-                    BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.Y;
-                    BackgroundColor3 = rgb(255,255,255);
-                });
-
-                Library:Create("UIListLayout", {
-                    Parent = SubItems.Elements;
-                    Padding = dim(0,4);
-                    SortOrder = Enum.SortOrder.LayoutOrder;
-                });
-
-                function Data.OpenTab()
-                    local Cache = Cfg.TabInfo
-                    if Cache then
-                        Library:Tween(Cache.Indicator, {BackgroundTransparency = 1})
-                        Library:Tween(Cache.Label, {BackgroundTransparency = 0})
-                        Cache.Elements.Visible = false
-                        Cache.Elements.Parent = Library.Other
-                    end
-                    Library:Tween(SubItems.Indicator, {BackgroundTransparency = 0})
-                    Library:Tween(SubItems.Label, {BackgroundTransparency = 1})
-                    SubItems.Elements.Parent = Items.ContentArea
-                    SubItems.Elements.Visible = true
-                    Cfg.TabInfo = SubItems
-                end
-
-                SubItems.Btn.MouseButton1Down:Connect(function()
-                    Data.OpenTab()
-                end)
-
-                if not Cfg.TabInfo then
-                    Data.OpenTab()
-                end
-
-                -- Expose Items table as the section target so callers can do Tab1:Toggle() etc
-                Data.Items.Elements = SubItems.Elements
-                Data.Items.GroupElements = nil
-
                 Cfg.Store[#Cfg.Store + 1] = setmetatable(Data, Library)
             end
 
@@ -5454,6 +4956,8 @@ SubItems.Label = Library:Create("TextLabel", {
         end
 
     -- Notification Library
+            
+
         -- IGNORE: , TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
         function Notifications:RefreshNotifications() 
             local offset = 50
