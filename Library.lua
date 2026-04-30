@@ -3652,18 +3652,18 @@ end})
                 outline;
             }
 
-            local items = cfg.items; do 
-                local Position = vec2(flags["notif_x"] or 20, offset + (flags["notif_y"] or 50) - 50)
-    Parent = library[ "items" ];
-    Size = dim2(0, 220, 0, 0);
-    Name = "\0";
-    BorderColor3 = rgb(0, 0, 0);
-    BorderSizePixel = 0;
-    BackgroundTransparency = 0;
-    AnchorPoint = vec2(1, 0);
-    AutomaticSize = Enum.AutomaticSize.Y;
-    BackgroundColor3 = rgb(19, 19, 21)
-});
+local items = cfg.items; do 
+                items[ "notification" ] = library:create( "Frame" , {
+                    Parent = library[ "items" ];
+                    Size = dim2(0, 220, 0, 0);
+                    Name = "\0";
+                    BorderColor3 = rgb(0, 0, 0);
+                    BorderSizePixel = 0;
+                    BackgroundTransparency = 0;
+                    AnchorPoint = vec2(1, 0);
+                    AutomaticSize = Enum.AutomaticSize.Y;
+                    BackgroundColor3 = rgb(19, 19, 21)
+                });
 
 library:create( "UICorner" , {
     Parent = items[ "notification" ];
