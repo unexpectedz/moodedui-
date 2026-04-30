@@ -616,6 +616,14 @@ items[ "title_gradient" ] = library:create( "UIGradient" , {
     Color = rgbseq{rgbkey(0, themes.preset.accent), rgbkey(1, rgb(255, 255, 255))};
     Rotation = 0;
 });
+
+library:connection(run.Heartbeat, function()
+    if items[ "title_gradient" ] then
+        local h, s, v = themes.preset.accent:ToHSV()
+        local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
+        items[ "title_gradient" ].Color = rgbseq{rgbkey(0, themes.preset.accent), rgbkey(1, lighter)}
+    end
+end)
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
                     Parent = items[ "main" ];
@@ -857,7 +865,7 @@ items[ "underline" ] = library:create( "Frame" , {
     BorderSizePixel = 0;
     BackgroundColor3 = themes.preset.accent;
     BackgroundTransparency = 1;
-});
+}); library:apply_theme(items[ "underline" ], "accent", "BackgroundColor3");
 
 library:create( "UICorner" , {
     Parent = items[ "underline" ];
@@ -3594,6 +3602,11 @@ self.selected_tab = {
             section:button({name = "Delete", callback = function() delfile(library.directory .. "/configs/" .. flags["config_name_list"] .. ".cfg")  library:update_config_list() notifications:create_notification({name = "Configs", info = "Deleted config:\n" .. flags["config_name_list"]}) end})
             section:colorpicker({name = "Menu Accent", callback = function(color, alpha) library:update_theme("accent", color) end, color = themes.preset.accent})
             section:keybind({name = "Menu Bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
+section:slider({name = "Notif X Position", flag = "notif_x", min = 0, max = 200, default = 20, suffix = "px"})
+section:slider({name = "Notif Y Position", flag = "notif_y", min = 0, max = 200, default = 50, suffix = "px"})
+section:button({name = "Test Notification", callback = function()
+    notifications:create_notification({name = "Test", info = "This is a test notification!"})
+end})
         end
     --
 
@@ -3642,89 +3655,100 @@ self.selected_tab = {
             }
 
             local items = cfg.items; do 
-                items[ "notification" ] = library:create( "Frame" , {
-                    Parent = library[ "items" ];
-                    Size = dim2(0, 210, 0, 53);
-                    Name = "\0";
-                    BorderColor3 = rgb(0, 0, 0);
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = 1;
-                    AnchorPoint = vec2(1, 0);
-                    AutomaticSize = Enum.AutomaticSize.Y;
-                    BackgroundColor3 = rgb(14, 14, 16)
-                });
-                
-                library:create( "UIStroke" , {
-                    Color = rgb(23, 23, 29);
-                    Parent = items[ "notification" ];
-                    Transparency = 1;
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-                });
-                
-                items[ "title" ] = library:create( "TextLabel" , {
-                    FontFace = fonts.font;
-                    TextColor3 = rgb(255, 255, 255);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = cfg.name;
-                    Parent = items[ "notification" ];
-                    Name = "\0";
-                    BackgroundTransparency = 1;
-                    Position = dim2(0, 7, 0, 6);
-                    BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.XY;
-                    TextSize = 14;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                });
-                
-                library:create( "UICorner" , {
-                    Parent = items[ "notification" ];
-                    CornerRadius = dim(0, 3)
-                });
-                
-                items[ "info" ] = library:create( "TextLabel" , {
-                    FontFace = fonts.font;
-                    TextColor3 = rgb(145, 145, 145);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = cfg.info;
-                    Parent = items[ "notification" ];
-                    Name = "\0";
-                    Position = dim2(0, 9, 0, 22);
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = 1;
-                    TextXAlignment = Enum.TextXAlignment.Left;
-                    TextWrapped = true;
-                    AutomaticSize = Enum.AutomaticSize.XY;
-                    TextSize = 14;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                });
-                
-                library:create( "UIPadding" , {
-                    PaddingBottom = dim(0, 17);
-                    PaddingRight = dim(0, 8);
-                    Parent = items[ "info" ]
-                });
-                
-                items[ "bar" ] = library:create( "Frame" , {
-                    AnchorPoint = vec2(0, 1);
-                    Parent = items[ "notification" ];
-                    Name = "\0";
-                    Position = dim2(0, 8, 1, -6);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(0, 0, 0, 5);
-                    BackgroundTransparency = 1;
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset.accent
-                });
-                
-                library:create( "UICorner" , {
-                    Parent = items[ "bar" ];
-                    CornerRadius = dim(0, 999)
-                });
-                
-                library:create( "UIPadding" , {
-                    PaddingRight = dim(0, 8);
-                    Parent = items[ "notification" ]
-                });
+                local Position = vec2(flags["notif_x"] or 20, offset + (flags["notif_y"] or 50) - 50)
+    Parent = library[ "items" ];
+    Size = dim2(0, 220, 0, 0);
+    Name = "\0";
+    BorderColor3 = rgb(0, 0, 0);
+    BorderSizePixel = 0;
+    BackgroundTransparency = 0;
+    AnchorPoint = vec2(1, 0);
+    AutomaticSize = Enum.AutomaticSize.Y;
+    BackgroundColor3 = rgb(19, 19, 21)
+});
+
+library:create( "UICorner" , {
+    Parent = items[ "notification" ];
+    CornerRadius = dim(0, 7)
+});
+
+library:create( "UIStroke" , {
+    Color = rgb(23, 23, 29);
+    Parent = items[ "notification" ];
+    Transparency = 0;
+    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+});
+
+items[ "accent_bar" ] = library:create( "Frame" , {
+    Parent = items[ "notification" ];
+    Name = "\0";
+    Position = dim2(0, 0, 0, 0);
+    BorderColor3 = rgb(0, 0, 0);
+    Size = dim2(0, 3, 1, 0);
+    BorderSizePixel = 0;
+    BackgroundColor3 = themes.preset.accent;
+}); library:apply_theme(items[ "accent_bar" ], "accent", "BackgroundColor3");
+
+library:create( "UICorner" , {
+    Parent = items[ "accent_bar" ];
+    CornerRadius = dim(0, 999)
+});
+
+items[ "title" ] = library:create( "TextLabel" , {
+    FontFace = fonts.font;
+    TextColor3 = rgb(255, 255, 255);
+    BorderColor3 = rgb(0, 0, 0);
+    Text = cfg.name;
+    Parent = items[ "notification" ];
+    Name = "\0";
+    BackgroundTransparency = 1;
+    Position = dim2(0, 14, 0, 8);
+    BorderSizePixel = 0;
+    AutomaticSize = Enum.AutomaticSize.XY;
+    TextSize = 14;
+    BackgroundColor3 = rgb(255, 255, 255)
+});
+
+items[ "info" ] = library:create( "TextLabel" , {
+    FontFace = fonts.small;
+    TextColor3 = rgb(100, 100, 100);
+    BorderColor3 = rgb(0, 0, 0);
+    Text = cfg.info;
+    Parent = items[ "notification" ];
+    Name = "\0";
+    Position = dim2(0, 14, 0, 24);
+    BorderSizePixel = 0;
+    BackgroundTransparency = 1;
+    TextXAlignment = Enum.TextXAlignment.Left;
+    TextWrapped = true;
+    Size = dim2(1, -22, 0, 0);
+    AutomaticSize = Enum.AutomaticSize.Y;
+    TextSize = 13;
+    BackgroundColor3 = rgb(255, 255, 255)
+});
+
+library:create( "UIPadding" , {
+    PaddingBottom = dim(0, 10);
+    PaddingTop = dim(0, 4);
+    Parent = items[ "notification" ]
+});
+
+items[ "bar" ] = library:create( "Frame" , {
+    AnchorPoint = vec2(0, 1);
+    Parent = items[ "notification" ];
+    Name = "\0";
+    Position = dim2(0, 14, 1, -5);
+    BorderColor3 = rgb(0, 0, 0);
+    Size = dim2(0, 0, 0, 2);
+    BackgroundTransparency = 0;
+    BorderSizePixel = 0;
+    BackgroundColor3 = themes.preset.accent
+}); library:apply_theme(items[ "bar" ], "accent", "BackgroundColor3");
+
+library:create( "UICorner" , {
+    Parent = items[ "bar" ];
+    CornerRadius = dim(0, 999)
+});
             end
             
             local index = #notifications.notifs + 1
