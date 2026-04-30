@@ -3675,7 +3675,13 @@ end})
 section:button({name = "Load", callback = function()
     local name = flags["config_name_list"]
     if not name or name == "" then return end
-    library:load_config(readfile(library.directory .. "/configs/" .. name .. ".cfg"))
+    local path = library.directory .. "/configs/" .. name .. ".cfg"
+    notifications:create_notification({name = "Debug", info = "Trying:\n" .. path})
+    if not isfile(path) then
+        notifications:create_notification({name = "Configs", info = "File not found:\n" .. name})
+        return
+    end
+    library:load_config(readfile(path))
     library:update_config_list()
     notifications:create_notification({name = "Configs", info = "Loaded config:\n" .. name})
 end})
