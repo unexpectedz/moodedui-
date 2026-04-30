@@ -517,8 +517,8 @@ function library:create(instance, options)
         ins[prop] = value
     end
 
-    if ins:IsA("TextLabel") or ins:IsA("TextButton") or ins:IsA("TextBox") then
-        if ins.TextColor3 == rgb(245, 245, 245) then
+if ins:IsA("TextLabel") or ins:IsA("TextButton") or ins:IsA("TextBox") then
+        if ins.TextColor3 == rgb(245, 245, 245) and ins.Name ~= "__title" then
             library:apply_theme(ins, "text", "TextColor3")
         end
     end
@@ -647,7 +647,7 @@ items[ "title" ] = library:create( "TextLabel" , {
     BorderColor3 = rgb(0, 0, 0);
     Text = name;
     Parent = items[ "side_frame" ];
-    Name = "\0";
+    Name = "__title";
     Text = cfg.name .. cfg.suffix;
     BackgroundTransparency = 1;
     Size = dim2(1, 0, 0, 70);
