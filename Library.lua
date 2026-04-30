@@ -400,43 +400,60 @@ local themes = {
             config_holder.refresh_options(list)
         end 
 
-        function library:get_config()
-            local Config = {}
-            
-            for _, v in next, flags do
-                if type(v) == "table" and v.key then
-                    Config[_] = {active = v.active, mode = v.mode, key = tostring(v.key)}
-                elseif type(v) == "table" and v["Transparency"] and v["Color"] then
-                    Config[_] = {Transparency = v["Transparency"], Color = v["Color"]:ToHex()}
-                else
-                    Config[_] = v
-                end
-            end 
-            
-            return http_service:JSONEncode(Config)
+function library:get_config()
+    local Config = {}
+    
+    for _, v in next, flags do
+        if type(v) == "table" and v.key then
+            Config[_] = {active = v.active, mode = v.mode, key = tostring(v.key)}
+        elseif type(v) == "table" and v["Transparency"] and v["Color"] then
+            Config[_] = {Transparency = v["Transparency"], Color = v["Color"]:ToHex()}
+        else
+            Config[_] = v
+        end
+    end 
+
+    Config["__themes"] = {
+        accent = themes.preset.accent:ToHex(),
+        background = themes.preset.background:ToHex(),
+        sub_background = themes.preset.sub_background:ToHex(),
+        outline = themes.preset.outline:ToHex(),
+        text = themes.preset.text:ToHex(),
+    }
+    
+    return http_service:JSONEncode(Config)
+end
+
+function library:load_config(config_json) 
+    local config = http_service:JSONDecode(config_json)
+    
+    if config["__themes"] then
+        local t = config["__themes"]
+        if t.accent then library:update_theme("accent", hex(t.accent)) end
+        if t.background then library:update_theme("background", hex(t.background)) end
+        if t.sub_background then library:update_theme("sub_background", hex(t.sub_background)) end
+        if t.outline then library:update_theme("outline", hex(t.outline)) end
+        if t.text then library:update_theme("text", hex(t.text)) end
+    end
+
+    for _, v in config do 
+        local function_set = library.config_flags[_]
+        
+        if _ == "config_name_list" or _ == "__themes" then 
+            continue 
         end
 
-        function library:load_config(config_json) 
-            local config = http_service:JSONDecode(config_json)
-            
-            for _, v in config do 
-                local function_set = library.config_flags[_]
-                
-                if _ == "config_name_list" then 
-                    continue 
-                end
-
-                if function_set then 
-                    if type(v) == "table" and v["Transparency"] and v["Color"] then
-                        function_set(hex(v["Color"]), v["Transparency"])
-                    elseif type(v) == "table" and v["active"] then 
-                        function_set(v)
-                    else
-                        function_set(v)
-                    end
-                end 
-            end 
+        if function_set then 
+            if type(v) == "table" and v["Transparency"] and v["Color"] then
+                function_set(hex(v["Color"]), v["Transparency"])
+            elseif type(v) == "table" and v["active"] then 
+                function_set(v)
+            else
+                function_set(v)
+            end
         end 
+    end 
+end
         
         function library:round(number, float) 
             local multiplier = 1 / (float or 1)
@@ -625,21 +642,21 @@ local main_stroke = library:create( "UIStroke" , {
                 });
 
                 local accent = themes.preset.accent
-                items[ "title" ] = library:create( "TextLabel" , {
-                    FontFace = fonts.font;
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = name;
-                    Parent = items[ "side_frame" ];
-                    Name = "\0";
-                    Text = cfg.name .. cfg.suffix;
-                    BackgroundTransparency = 1;
-                    Size = dim2(1, 0, 0, 70);
-                    TextColor3 = themes.preset.accent;
-                    BorderSizePixel = 0;
-                    RichText = true;
-                    TextSize = 30;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                });
+items[ "title" ] = library:create( "TextLabel" , {
+    FontFace = fonts.font;
+    BorderColor3 = rgb(0, 0, 0);
+    Text = name;
+    Parent = items[ "side_frame" ];
+    Name = "\0";
+    Text = cfg.name .. cfg.suffix;
+    BackgroundTransparency = 1;
+    Size = dim2(1, 0, 0, 70);
+    TextColor3 = rgb(255, 255, 255);
+    BorderSizePixel = 0;
+    RichText = true;
+    TextSize = 30;
+    BackgroundColor3 = rgb(255, 255, 255)
+});
 
 local function make_gradient_color(c)
     local h, s, v = c:ToHSV()
