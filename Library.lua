@@ -1130,10 +1130,13 @@ local Verdana = RegisterFont("ZektonFont", 400, "Normal", {
                 Items.Colorpicker.Position = dim2(0, Items.ColorpickerObject.AbsolutePosition.X + 2, 0, Items.ColorpickerObject.AbsolutePosition.Y + 74)
             end
             
-            function Cfg.Set(color, alpha)
-                if type(color) == "boolean" then 
-                    return
-                end 
+function Cfg.Set(color, alpha)
+                if type(color) == "boolean" then
+                    color = nil
+                end
+                if type(alpha) == "boolean" then
+                    alpha = nil
+                end
 
                 if color then 
                     h, s, v = color:ToHSV()
@@ -4759,10 +4762,193 @@ local Verdana = RegisterFont("ZektonFont", 400, "Normal", {
                 Cfg.Callback()
             end)
             
-            return setmetatable(Cfg, Library)
+return setmetatable(Cfg, Library)
         end
 
-        function Library:Configs(window) 
+        function Library:SubSection(properties)
+            local Cfg = {
+                Tabs = properties.Tabs or {"Tab1"};
+                Side = properties.side or properties.Side or "Left";
+                Size = properties.size or properties.Size or nil;
+                Items = {};
+                Store = {};
+                TabInfo = nil;
+            }
+
+            local Items = Cfg.Items; do
+                Items.Wrapper = Library:Create("Frame", {
+                    Parent = self.Items[Cfg.Side];
+                    Name = "\0";
+                    Size = dim2(1, 0, Cfg.Size or 0, 0);
+                    BorderColor3 = rgb(0,0,0);
+                    BorderSizePixel = 0;
+                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
+                    BackgroundColor3 = themes.preset.outline;
+                }); Library:Themify(Items.Wrapper, "outline", "BackgroundColor3")
+
+                Items.TabBar = Library:Create("Frame", {
+                    Parent = Items.Wrapper;
+                    Name = "\0";
+                    Position = dim2(0,1,0,1);
+                    Size = dim2(1,-2,0,20);
+                    BorderColor3 = rgb(0,0,0);
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = themes.preset.gradient;
+                }); Library:Themify(Items.TabBar, "gradient", "BackgroundColor3")
+
+                Items.AccentLine = Library:Create("Frame", {
+                    Parent = Items.TabBar;
+                    Name = "\0";
+                    AnchorPoint = vec2(0,1);
+                    Position = dim2(0,0,1,0);
+                    Size = dim2(1,0,0,1);
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = themes.preset.accent;
+                }); Library:Themify(Items.AccentLine, "accent", "BackgroundColor3")
+
+                Items.TabButtons = Library:Create("Frame", {
+                    Parent = Items.TabBar;
+                    Name = "\0";
+                    BackgroundTransparency = 1;
+                    Size = dim2(1,0,1,0);
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = rgb(255,255,255);
+                });
+
+                Library:Create("UIListLayout", {
+                    Parent = Items.TabButtons;
+                    FillDirection = Enum.FillDirection.Horizontal;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    Padding = dim(0,0);
+                });
+
+                Library:Create("UIPadding", {
+                    Parent = Items.TabButtons;
+                    PaddingTop = dim(0,3);
+                    PaddingLeft = dim(0,2);
+                });
+
+                Items.ContentArea = Library:Create("Frame", {
+                    Parent = Items.Wrapper;
+                    Name = "\0";
+                    Position = dim2(0,1,0,22);
+                    Size = dim2(1,-2, Cfg.Size and 1 or 0, Cfg.Size and -23 or 0);
+                    BorderSizePixel = 0;
+                    BackgroundTransparency = 1;
+                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
+                    BackgroundColor3 = themes.preset.background;
+                });
+
+                Library:Create("UIPadding", {
+                    Parent = Items.ContentArea;
+                    PaddingBottom = dim(0,4);
+                });
+            end
+
+            for _, tabName in Cfg.Tabs do
+                local Data = {Items = {}}
+                local SubItems = Data.Items
+
+                SubItems.Btn = Library:Create("TextButton", {
+                    Parent = Items.TabButtons;
+                    Name = "\0";
+                    Size = dim2(0,0,1,0);
+                    AutomaticSize = Enum.AutomaticSize.X;
+                    AutoButtonColor = false;
+                    Text = "";
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = rgb(255,255,255);
+                    BackgroundTransparency = 1;
+                });
+
+                SubItems.Label = Library:Create("TextLabel", {
+                    Parent = SubItems.Btn;
+                    Name = "\0";
+                    Text = tabName;
+                    FontFace = Library.Font;
+                    TextSize = 12;
+                    TextColor3 = themes.preset.text_color;
+                    BackgroundTransparency = not Cfg.TabInfo and 0 or 1;
+                    BackgroundColor3 = themes.preset.tab_background;
+                    AutomaticSize = Enum.AutomaticSize.XY;
+                    Size = dim2(0,0,1,0);
+                    BorderSizePixel = 0;
+                    BorderColor3 = rgb(0,0,0);
+                }); Library:Themify(SubItems.Label, "tab_background", "BackgroundColor3")
+
+                Library:Create("UIPadding", {
+                    Parent = SubItems.Label;
+                    PaddingLeft = dim(0,6);
+                    PaddingRight = dim(0,6);
+                });
+
+                Library:Create("UIStroke", {
+                    Parent = SubItems.Label;
+                    LineJoinMode = Enum.LineJoinMode.Miter;
+                });
+
+                SubItems.Indicator = Library:Create("Frame", {
+                    Parent = SubItems.Btn;
+                    Name = "\0";
+                    AnchorPoint = vec2(0,1);
+                    Position = dim2(0,0,1,1);
+                    Size = dim2(1,0,0,1);
+                    ZIndex = 3;
+                    BorderSizePixel = 0;
+                    BackgroundTransparency = Cfg.TabInfo and 1 or 0;
+                    BackgroundColor3 = themes.preset.accent;
+                }); Library:Themify(SubItems.Indicator, "accent", "BackgroundColor3")
+
+                SubItems.Elements = Library:Create("Frame", {
+                    Parent = Library.Other;
+                    Name = "\0";
+                    Visible = false;
+                    BackgroundTransparency = 1;
+                    Size = dim2(1,-12,0,0);
+                    Position = dim2(0,6,0,6);
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.Y;
+                    BackgroundColor3 = rgb(255,255,255);
+                });
+
+                Library:Create("UIListLayout", {
+                    Parent = SubItems.Elements;
+                    Padding = dim(0,4);
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                });
+
+                function Data.OpenTab()
+                    local Cache = Cfg.TabInfo
+                    if Cache then
+                        Library:Tween(Cache.Indicator, {BackgroundTransparency = 1})
+                        Library:Tween(Cache.Label, {BackgroundTransparency = 0})
+                        Cache.Elements.Visible = false
+                        Cache.Elements.Parent = Library.Other
+                    end
+                    Library:Tween(SubItems.Indicator, {BackgroundTransparency = 0})
+                    Library:Tween(SubItems.Label, {BackgroundTransparency = 1})
+                    SubItems.Elements.Parent = Items.ContentArea
+                    SubItems.Elements.Visible = true
+                    Cfg.TabInfo = SubItems
+                end
+
+                SubItems.Btn.MouseButton1Down:Connect(function()
+                    Data.OpenTab()
+                end)
+
+                if not Cfg.TabInfo then
+                    Data.OpenTab()
+                end
+
+                Data.Items.GroupElements = nil
+
+                Cfg.Store[#Cfg.Store + 1] = setmetatable(Data, Library)
+            end
+
+            return unpack(Cfg.Store)
+        end
+
+        function Library:Configs(window)
             local Text;
             local ConfigText; 
 
