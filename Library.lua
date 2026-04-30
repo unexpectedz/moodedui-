@@ -4869,6 +4869,11 @@ Items.ContentArea = Library:Create("Frame", {
                     BackgroundTransparency = 1;
                 });
 
+local labelTransparency = 0
+                if Cfg.TabInfo ~= nil then
+                    labelTransparency = 1
+                end
+
                 SubItems.Label = Library:Create("TextLabel", {
                     Parent = SubItems.Btn;
                     Name = "\0";
@@ -4876,13 +4881,17 @@ Items.ContentArea = Library:Create("Frame", {
                     FontFace = Library.Font;
                     TextSize = 12;
                     TextColor3 = themes.preset.text_color;
-                    BackgroundTransparency = not Cfg.TabInfo and 0 or 1;
+                    BackgroundTransparency = labelTransparency;
                     BackgroundColor3 = themes.preset.tab_background;
                     AutomaticSize = Enum.AutomaticSize.XY;
                     Size = dim2(0,0,1,0);
                     BorderSizePixel = 0;
                     BorderColor3 = rgb(0,0,0);
-                }); Library:Themify(SubItems.Label, "tab_background", "BackgroundColor3")
+                }); 
+                
+                if SubItems.Label then
+                    Library:Themify(SubItems.Label, "tab_background", "BackgroundColor3")
+                end
 
                 Library:Create("UIPadding", {
                     Parent = SubItems.Label;
@@ -5122,13 +5131,15 @@ function Library:SubSection(properties)
                     Padding = dim(0,0);
                 });
 
-Library:Create("UIPadding", {
-                    Parent = SubItems.Label;
-                    PaddingLeft = dim(0,8);
-                    PaddingRight = dim(0,8);
-                    PaddingTop = dim(0,2);
-                    PaddingBottom = dim(0,2);
-                });
+if SubItems.Label then
+                    Library:Create("UIPadding", {
+                        Parent = SubItems.Label;
+                        PaddingLeft = dim(0,8);
+                        PaddingRight = dim(0,8);
+                        PaddingTop = dim(0,2);
+                        PaddingBottom = dim(0,2);
+                    });
+                end
 
                 -- Scrollable content area
                 Items.ContentArea = Library:Create("ScrollingFrame", {
