@@ -80,20 +80,37 @@
         current_open; 
     }
 
-    local themes = {
-        preset = {
-            accent = rgb(155, 150, 219),
-        }, 
+local themes = {
+    preset = {
+        accent = rgb(155, 150, 219),
+        background = rgb(14, 14, 16),
+        sub_background = rgb(22, 22, 24),
+        outline = rgb(23, 23, 29),
+        text = rgb(245, 245, 245),
+    }, 
 
-        utility = {
-            accent = {
-                BackgroundColor3 = {}, 	
-                TextColor3 = {}, 
-                ImageColor3 = {}, 
-                ScrollBarImageColor3 = {} 
-            },
-        }
+    utility = {
+        accent = {
+            BackgroundColor3 = {}, 	
+            TextColor3 = {}, 
+            ImageColor3 = {}, 
+            ScrollBarImageColor3 = {} 
+        },
+        background = {
+            BackgroundColor3 = {},
+        },
+        sub_background = {
+            BackgroundColor3 = {},
+        },
+        outline = {
+            BackgroundColor3 = {},
+            Color = {},
+        },
+        text = {
+            TextColor3 = {},
+        },
     }
+}
 
     local keys = {
         [Enum.KeyCode.LeftShift] = "LS",
@@ -534,26 +551,27 @@ end
             }); 
 
             local items = cfg.items; do
-                items[ "main" ] = library:create( "Frame" , {
-                    Parent = library[ "items" ];
-                    Size = cfg.size;
-                    Name = "\0";
-                    Position = dim2(0.5, -cfg.size.X.Offset / 2, 0.5, -cfg.size.Y.Offset / 2);
-                    BorderColor3 = rgb(0, 0, 0);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(14, 14, 16)
-                }); items[ "main" ].Position = dim2(0, items[ "main" ].AbsolutePosition.X, 0, items[ "main" ].AbsolutePosition.Y)
+items[ "main" ] = library:create( "Frame" , {
+    Parent = library[ "items" ];
+    Size = cfg.size;
+    Name = "\0";
+    Position = dim2(0.5, -cfg.size.X.Offset / 2, 0.5, -cfg.size.Y.Offset / 2);
+    BorderColor3 = rgb(0, 0, 0);
+    BorderSizePixel = 0;
+    BackgroundColor3 = rgb(14, 14, 16)
+}); items[ "main" ].Position = dim2(0, items[ "main" ].AbsolutePosition.X, 0, items[ "main" ].AbsolutePosition.Y)
+library:apply_theme(items[ "main" ], "background", "BackgroundColor3")
                 
                 library:create( "UICorner" , {
                     Parent = items[ "main" ];
                     CornerRadius = dim(0, 10)
                 });
                 
-                library:create( "UIStroke" , {
-                    Color = rgb(23, 23, 29);
-                    Parent = items[ "main" ];
-                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-                });
+local main_stroke = library:create( "UIStroke" , {
+    Color = rgb(23, 23, 29);
+    Parent = items[ "main" ];
+    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+}); library:apply_theme(main_stroke, "outline", "Color")
                 
                 items[ "side_frame" ] = library:create( "Frame" , {
                     Parent = items[ "main" ];
@@ -1255,20 +1273,20 @@ self.selected_tab = {
                     CornerRadius = dim(0, 7)
                 });
                 
-                items[ "inline" ] = library:create( "Frame" , {
-                    Parent = items[ "outline" ];
-                    Name = "\0";
-                    Position = dim2(0, 1, 0, 1);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -2, 1, -2);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(22, 22, 24)
-                });
-                
-                library:create( "UICorner" , {
-                    Parent = items[ "inline" ];
-                    CornerRadius = dim(0, 7)
-                });
+items[ "inline" ] = library:create( "Frame" , {
+    Parent = items[ "outline" ];
+    Name = "\0";
+    Position = dim2(0, 1, 0, 1);
+    BorderColor3 = rgb(0, 0, 0);
+    Size = dim2(1, -2, 1, -2);
+    BorderSizePixel = 0;
+    BackgroundColor3 = rgb(22, 22, 24)
+}); library:apply_theme(items[ "inline" ], "sub_background", "BackgroundColor3")
+
+library:create( "UICorner" , {
+    Parent = items[ "inline" ];
+    CornerRadius = dim(0, 7)
+});
                 
                 items[ "scrolling" ] = library:create( "ScrollingFrame" , {
                     ScrollBarImageColor3 = rgb(44, 44, 46);
@@ -1510,12 +1528,12 @@ self.selected_tab = {
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
                 
-                items[ "name" ] = library:create( "TextLabel" , {
-                    FontFace = fonts.small;
-                    TextColor3 = rgb(245, 245, 245);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = cfg.name;
-                    Parent = items[ "toggle" ];
+items[ "name" ] = library:create( "TextLabel" , {
+    FontFace = fonts.small;
+    TextColor3 = rgb(245, 245, 245);
+    BorderColor3 = rgb(0, 0, 0);
+    Text = cfg.name;
+    Parent = items[ "toggle" ];
                     Name = "\0";
                     Size = dim2(1, 0, 0, 0);
                     BackgroundTransparency = 1;
@@ -1525,6 +1543,9 @@ self.selected_tab = {
                     TextSize = 16;
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
+
+library:apply_theme(items[ "name" ], "text", "TextColor3")
+
 
                 if cfg.info then 
                     items[ "info" ] = library:create( "TextLabel" , {
@@ -3625,6 +3646,10 @@ self.selected_tab = {
             section:button({name = "Load", callback = function() library:load_config(readfile(library.directory .. "/configs/" .. flags["config_name_list"] .. ".cfg"))  library:update_config_list() notifications:create_notification({name = "Configs", info = "Loaded config:\n" .. flags["config_name_list"]}) end})
             section:button({name = "Delete", callback = function() delfile(library.directory .. "/configs/" .. flags["config_name_list"] .. ".cfg")  library:update_config_list() notifications:create_notification({name = "Configs", info = "Deleted config:\n" .. flags["config_name_list"]}) end})
             section:colorpicker({name = "Menu Accent", callback = function(color, alpha) library:update_theme("accent", color) end, color = themes.preset.accent})
+section:colorpicker({name = "Background", callback = function(color, alpha) library:update_theme("background", color) end, color = themes.preset.background})
+section:colorpicker({name = "Sub Background", callback = function(color, alpha) library:update_theme("sub_background", color) end, color = themes.preset.sub_background})
+section:colorpicker({name = "Outline", callback = function(color, alpha) library:update_theme("outline", color) end, color = themes.preset.outline})
+section:colorpicker({name = "Text", callback = function(color, alpha) library:update_theme("text", color) end, color = themes.preset.text})
             section:keybind({name = "Menu Bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
 section:slider({name = "Notif X Position", flag = "notif_x", min = 0, max = 200, default = 20, suffix = "px"})
 section:slider({name = "Notif Y Position", flag = "notif_y", min = 0, max = 200, default = 50, suffix = "px"})
