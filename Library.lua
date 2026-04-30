@@ -150,9 +150,9 @@
             return getcustomasset(Name .. ".font");
         end
         
-        local Verdana = RegisterFont("Verawdawdawdwaddana", 400, "Normal", {
-            Id = "Verdanawdawdwada.ttf",
-            Font = game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/fs-tahoma-8px.ttf"),
+local Verdana = RegisterFont("ZektonFont", 400, "Normal", {
+            Id = "zekton_rg.ttf",
+            Font = game:HttpGet("https://github.com/LuckyHub1/LuckyHub/raw/main/zekton_rg.ttf"),
         })
 
         Library.Font = Font.new(Verdana, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
@@ -1473,35 +1473,39 @@
                         BackgroundColor3 = themes.preset.outline
                     });	Library:Themify(Items.PageHolder, "outline", "BackgroundColor3")
                     
+-- Bottom tab bar
                     Items.TabButtons = Library:Create( "Frame" , {
                         Parent = Items.PageHolder;
                         Name = "\0";
-                        Position = dim2(0, 1, 0, 1);
+                        AnchorPoint = vec2(0, 1);
+                        Position = dim2(0, 1, 1, -1);
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(1, -2, 0, 23);
+                        Size = dim2(1, -2, 0, 24);
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
-                    
+
                     Items.Accent = Library:Create( "Frame" , {
                         Name = "\0";
+                        AnchorPoint = vec2(0, 1);
                         Parent = Items.TabButtons;
                         BorderColor3 = rgb(0, 0, 0);
+                        Position = dim2(0, 0, 0, 0);
                         Size = dim2(1, 0, 0, 2);
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset.accent
                     });	Library:Themify(Items.Accent, "accent", "BackgroundColor3")
-                    
+
                     Library:Create( "UIGradient" , {
                         Rotation = 90;
                         Parent = Items.Accent;
                         Color = rgbseq{rgbkey(0, rgb(255, 255, 255)), rgbkey(1, rgb(158, 158, 158))}
                     });
-                    
+
                     Items.Outline = Library:Create( "Frame" , {
                         Parent = Items.TabButtons;
                         Name = "\0";
-                        Position = dim2(0, 0, 0, 2);
+                        Position = dim2(0, 0, 0, 0);
                         BorderColor3 = rgb(0, 0, 0);
                         Size = dim2(1, 0, 0, 1);
                         BorderSizePixel = 0;
@@ -1513,7 +1517,7 @@
                         Parent = Items.TabButtons;
                         Color = rgbseq{rgbkey(0, themes.preset.gradient), rgbkey(1, themes.preset.background)}
                     }); Library:SaveGradient(gradient, "Deselected");
-                    
+
                     Items.Buttons = Library:Create( "Frame" , {
                         Parent = Items.TabButtons;
                         BackgroundTransparency = 1;
@@ -1523,37 +1527,38 @@
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
-                    
+
                     Library:Create( "UIListLayout" , {
                         Parent = Items.Buttons;
                         FillDirection = Enum.FillDirection.Horizontal;
                         SortOrder = Enum.SortOrder.LayoutOrder;
-                        Padding = dim(0, -1);
+                        Padding = dim(0, 0);
                     });
-                    
+
                     Library:Create( "UIPadding" , {
                         Parent = Items.Buttons;
-                        PaddingTop = dim(0, 3)
+                        PaddingTop = dim(0, 4)
                     });
-                    
+
                     Items.Outline = Library:Create( "Frame" , {
                         BorderColor3 = rgb(0, 0, 0);
-                        AnchorPoint = vec2(0, 1);
+                        AnchorPoint = vec2(0, 0);
                         Parent = Items.TabButtons;
                         Name = "\0";
-                        Position = dim2(0, 0, 1, 0);
+                        Position = dim2(0, 0, 0, 0);
                         Size = dim2(1, 0, 0, 1);
                         ZIndex = 2;
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset.outline
                     });	Library:Themify(Items.Outline, "outline", "BackgroundColor3")
-                    
+
+                    -- Page content area sits above the bottom tabs
                     Items.PageHolder = Library:Create( "Frame" , {
                         Parent = Items.PageHolder;
                         Name = "\0";
-                        Position = dim2(0, 1, 0, 24);
+                        Position = dim2(0, 1, 0, 1);
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(1, -2, 1, -25);
+                        Size = dim2(1, -2, 1, -26);
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset.background
                     });	Library:Themify(Items.PageHolder, "background", "BackgroundColor3")
@@ -2048,18 +2053,19 @@
                         LineJoinMode = Enum.LineJoinMode.Miter
                     });
                     
+-- Active indicator line appears at TOP of button (since tabs are at bottom)
                     Items.Fill = Library:Create( "Frame" , {
                         BorderColor3 = rgb(0, 0, 0);
-                        AnchorPoint = vec2(0, 1);
+                        AnchorPoint = vec2(0, 0);
                         Parent = Items.Button;
                         Name = "\0";
-                        Position = dim2(0, 0, 1, 1);
+                        Position = dim2(0, 0, 0, -1);
                         Size = dim2(1, -2, 0, 1);
                         ZIndex = 3;
                         BackgroundTransparency = 1;
                         BorderSizePixel = 0;
-                        BackgroundColor3 = themes.preset.gradient
-                    });	Library:Themify(Items.Fill, "gradient", "BackgroundColor3")
+                        BackgroundColor3 = themes.preset.accent
+                    });	Library:Themify(Items.Fill, "accent", "BackgroundColor3")
                     
                     local gradient = Library:Create( "UIGradient" , {
                         Rotation = 90;
@@ -4863,6 +4869,193 @@
 
         end
     --
+
+function Library:SubSection(properties)
+            local Cfg = {
+                Tabs = properties.Tabs or {"Tab1"};
+                Side = properties.side or properties.Side or "Left";
+                Size = properties.size or properties.Size or nil;
+                Items = {};
+                Store = {};
+                TabInfo = nil;
+            }
+
+            local Items = Cfg.Items; do
+                Items.Wrapper = Library:Create("Frame", {
+                    Parent = self.Items[Cfg.Side];
+                    Name = "\0";
+                    Size = dim2(1, 0, Cfg.Size or 0, 0);
+                    BorderColor3 = rgb(0,0,0);
+                    BorderSizePixel = 0;
+                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
+                    BackgroundColor3 = themes.preset.outline;
+                }); Library:Themify(Items.Wrapper, "outline", "BackgroundColor3")
+
+                -- Sub-tab bar at top
+                Items.TabBar = Library:Create("Frame", {
+                    Parent = Items.Wrapper;
+                    Name = "\0";
+                    Position = dim2(0,1,0,1);
+                    Size = dim2(1,-2,0,20);
+                    BorderColor3 = rgb(0,0,0);
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = themes.preset.gradient;
+                }); Library:Themify(Items.TabBar, "gradient", "BackgroundColor3")
+
+                Items.AccentLine = Library:Create("Frame", {
+                    Parent = Items.TabBar;
+                    Name = "\0";
+                    AnchorPoint = vec2(0,1);
+                    Position = dim2(0,0,1,0);
+                    Size = dim2(1,0,0,1);
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = themes.preset.accent;
+                }); Library:Themify(Items.AccentLine, "accent", "BackgroundColor3")
+
+                Items.TabButtons = Library:Create("Frame", {
+                    Parent = Items.TabBar;
+                    Name = "\0";
+                    BackgroundTransparency = 1;
+                    Size = dim2(1,0,1,0);
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = rgb(255,255,255);
+                });
+
+                Library:Create("UIListLayout", {
+                    Parent = Items.TabButtons;
+                    FillDirection = Enum.FillDirection.Horizontal;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    Padding = dim(0,0);
+                });
+
+                Library:Create("UIPadding", {
+                    Parent = Items.TabButtons;
+                    PaddingTop = dim(0,3);
+                    PaddingLeft = dim(0,2);
+                });
+
+                -- Scrollable content area
+                Items.ContentArea = Library:Create("ScrollingFrame", {
+                    Parent = Items.Wrapper;
+                    Name = "\0";
+                    Position = dim2(0,1,0,22);
+                    Size = dim2(1,-2, Cfg.Size and 1 or 0, Cfg.Size and -23 or 0);
+                    BorderSizePixel = 0;
+                    BackgroundTransparency = 1;
+                    AutomaticCanvasSize = Enum.AutomaticSize.Y;
+                    CanvasSize = dim2(0,0,0,0);
+                    ScrollBarThickness = 2;
+                    ScrollBarImageColor3 = themes.preset.accent;
+                    AutomaticSize = Cfg.Size and Enum.AutomaticSize.None or Enum.AutomaticSize.Y;
+                    BackgroundColor3 = themes.preset.background;
+                }); Library:Themify(Items.ContentArea, "accent", "ScrollBarImageColor3")
+            end
+
+            for _, tabName in Cfg.Tabs do
+                local Data = {Items = {}}
+                local SubItems = Data.Items
+
+                SubItems.Btn = Library:Create("TextButton", {
+                    Parent = Items.TabButtons;
+                    Name = "\0";
+                    Size = dim2(0,0,1,0);
+                    AutomaticSize = Enum.AutomaticSize.X;
+                    AutoButtonColor = false;
+                    Text = "";
+                    BorderSizePixel = 0;
+                    BackgroundColor3 = rgb(255,255,255);
+                    BackgroundTransparency = 1;
+                });
+
+                SubItems.Label = Library:Create("TextLabel", {
+                    Parent = SubItems.Btn;
+                    Name = "\0";
+                    Text = tabName;
+                    FontFace = Library.Font;
+                    TextSize = 12;
+                    TextColor3 = themes.preset.text_color;
+                    BackgroundTransparency = not Cfg.TabInfo and 0 or 1;
+                    BackgroundColor3 = themes.preset.tab_background;
+                    AutomaticSize = Enum.AutomaticSize.XY;
+                    Size = dim2(0,0,1,0);
+                    BorderSizePixel = 0;
+                    BorderColor3 = rgb(0,0,0);
+                }); Library:Themify(SubItems.Label, "tab_background", "BackgroundColor3")
+
+                Library:Create("UIPadding", {
+                    Parent = SubItems.Label;
+                    PaddingLeft = dim(0,6);
+                    PaddingRight = dim(0,6);
+                });
+
+                Library:Create("UIStroke", {
+                    Parent = SubItems.Label;
+                    LineJoinMode = Enum.LineJoinMode.Miter;
+                });
+
+                SubItems.Indicator = Library:Create("Frame", {
+                    Parent = SubItems.Btn;
+                    Name = "\0";
+                    AnchorPoint = vec2(0,1);
+                    Position = dim2(0,0,1,1);
+                    Size = dim2(1,0,0,1);
+                    ZIndex = 3;
+                    BorderSizePixel = 0;
+                    BackgroundTransparency = Cfg.TabInfo and 1 or 0;
+                    BackgroundColor3 = themes.preset.accent;
+                }); Library:Themify(SubItems.Indicator, "accent", "BackgroundColor3")
+
+                -- Each tab's element frame lives inside ContentArea
+                SubItems.Elements = Library:Create("Frame", {
+                    Parent = Library.Other;
+                    Name = "\0";
+                    Visible = false;
+                    BackgroundTransparency = 1;
+                    Size = dim2(1,-12,0,0);
+                    Position = dim2(0,6,0,6);
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.Y;
+                    BackgroundColor3 = rgb(255,255,255);
+                });
+
+                Library:Create("UIListLayout", {
+                    Parent = SubItems.Elements;
+                    Padding = dim(0,4);
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                });
+
+                function Data.OpenTab()
+                    local Cache = Cfg.TabInfo
+                    if Cache then
+                        Library:Tween(Cache.Indicator, {BackgroundTransparency = 1})
+                        Library:Tween(Cache.Label, {BackgroundTransparency = 0})
+                        Cache.Elements.Visible = false
+                        Cache.Elements.Parent = Library.Other
+                    end
+                    Library:Tween(SubItems.Indicator, {BackgroundTransparency = 0})
+                    Library:Tween(SubItems.Label, {BackgroundTransparency = 1})
+                    SubItems.Elements.Parent = Items.ContentArea
+                    SubItems.Elements.Visible = true
+                    Cfg.TabInfo = SubItems
+                end
+
+                SubItems.Btn.MouseButton1Down:Connect(function()
+                    Data.OpenTab()
+                end)
+
+                if not Cfg.TabInfo then
+                    Data.OpenTab()
+                end
+
+                -- Expose Items table as the section target so callers can do Tab1:Toggle() etc
+                Data.Items.Elements = SubItems.Elements
+                Data.Items.GroupElements = nil
+
+                Cfg.Store[#Cfg.Store + 1] = setmetatable(Data, Library)
+            end
+
+            return unpack(Cfg.Store)
+        end
 
     -- Notification Library
         -- IGNORE: , TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
