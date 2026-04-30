@@ -596,7 +596,7 @@
                     Text = name;
                     Parent = items[ "side_frame" ];
                     Name = "\0";
-                    Text = string.format('<u>%s</u><font color = "rgb(255, 255, 255)">%s</font>', cfg.name, cfg.suffix);
+                    Text = cfg.name .. cfg.suffix;
                     BackgroundTransparency = 1;
                     Size = dim2(1, 0, 0, 70);
                     TextColor3 = themes.preset.accent;
@@ -604,7 +604,13 @@
                     RichText = true;
                     TextSize = 30;
                     BackgroundColor3 = rgb(255, 255, 255)
-                }); library:apply_theme(items[ "title" ], "accent", "TextColor3");
+                });
+
+library:create( "UIGradient" , {
+    Parent = items[ "title" ];
+    Color = rgbseq{rgbkey(0, themes.preset.accent), rgbkey(1, rgb(255, 255, 255))};
+    Rotation = 0;
+});
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
                     Parent = items[ "main" ];
@@ -836,6 +842,22 @@
                         Enabled = false;
                         ApplyStrokeMode = Enum.ApplyStrokeMode.Border
                     });
+
+items[ "underline" ] = library:create( "Frame" , {
+    AnchorPoint = vec2(0, 1);
+    Parent = items[ "button" ];
+    Position = dim2(0, 8, 1, -2);
+    BorderColor3 = rgb(0, 0, 0);
+    Size = dim2(0, 0, 0, 2);
+    BorderSizePixel = 0;
+    BackgroundColor3 = themes.preset.accent;
+    BackgroundTransparency = 1;
+});
+
+library:create( "UICorner" , {
+    Parent = items[ "underline" ];
+    CornerRadius = dim(0, 999)
+});
                 -- 
 
                 -- Multi Sections
@@ -1037,6 +1059,7 @@
                     library:tween(selected_tab[ 1 ], {BackgroundTransparency = 1})
                     library:tween(selected_tab[ 2 ], {ImageColor3 = rgb(72, 72, 73)})
                     library:tween(selected_tab[ 3 ], {TextColor3 = rgb(72, 72, 73)})
+library:tween(selected_tab[ 6 ], {Size = dim2(0, 0, 0, 2), BackgroundTransparency = 1})
 
                     selected_tab[ 4 ].Visible = false
                     selected_tab[ 4 ].Parent = library[ "cache" ]
@@ -1047,6 +1070,7 @@
                 library:tween(items[ "button" ], {BackgroundTransparency = 0})
                 library:tween(items[ "icon" ], {ImageColor3 = themes.preset.accent})
                 library:tween(items[ "name" ], {TextColor3 = rgb(255, 255, 255)})
+library:tween(items[ "underline" ], {Size = dim2(1, -16, 0, 2), BackgroundTransparency = 0})
                 library:tween(items[ "tab_holder" ], {Size = dim2(1, -196, 1, -81)}, Enum.EasingStyle.Quad, 0.4)
                 
                 items[ "tab_holder" ].Visible = true 
@@ -1054,14 +1078,14 @@
                 items[ "multi_section_button_holder" ].Visible = true 
                 items[ "multi_section_button_holder" ].Parent = self.items[ "multi_holder" ]
 
-                self.selected_tab = {
-                    items[ "button" ];
-                    items[ "icon" ];
-                    items[ "name" ];
-                    items[ "tab_holder" ];
-                    items[ "multi_section_button_holder" ];
-                }
-
+self.selected_tab = {
+    items[ "button" ];
+    items[ "icon" ];
+    items[ "name" ];
+    items[ "tab_holder" ];
+    items[ "multi_section_button_holder" ];
+    items[ "underline" ];
+}
                 library:close_element()
             end
 
