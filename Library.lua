@@ -911,28 +911,29 @@ library:create( "UICorner" , {
 
                         local multi_items = data.items; do 
                             -- Button
-                                multi_items[ "button" ] = library:create( "TextButton" , {
-                                    FontFace = fonts.font;
-                                    TextColor3 = rgb(255, 255, 255);
-                                    BorderColor3 = rgb(0, 0, 0);
-                                    AutoButtonColor = false;
-                                    Text = "";
-                                    Parent = items[ "multi_section_button_holder" ];
-                                    Name = "\0";
-                                    Size = dim2(0, 0, 0, 39);
-                                    BackgroundTransparency = 1;
-                                    ClipsDescendants = true;
-                                    BorderSizePixel = 0;
-                                    AutomaticSize = Enum.AutomaticSize.X;
-                                    TextSize = 16;
-                                    BackgroundColor3 = rgb(25, 25, 29)
-                                });
+multi_items[ "button" ] = library:create( "TextButton" , {
+    FontFace = fonts.font;
+    TextColor3 = rgb(255, 255, 255);
+    BorderColor3 = rgb(0, 0, 0);
+    AutoButtonColor = false;
+    Text = "";
+    Parent = items[ "multi_section_button_holder" ];
+    Name = "\0";
+    Size = dim2(0, 0, 0, 39);
+    BackgroundTransparency = 1;
+    ClipsDescendants = false;
+    BorderSizePixel = 0;
+    AutomaticSize = Enum.AutomaticSize.X;
+    TextSize = 16;
+    BackgroundColor3 = rgb(25, 25, 29)
+});
                                 
 library:create( "UIListLayout" , {
     Parent = multi_items[ "button" ];
     FillDirection = Enum.FillDirection.Horizontal;
     VerticalAlignment = Enum.VerticalAlignment.Center;
-    Padding = dim(0, 6);
+    HorizontalAlignment = Enum.HorizontalAlignment.Center;
+    Padding = dim(0, 5);
     SortOrder = Enum.SortOrder.LayoutOrder;
 });
 
@@ -944,7 +945,7 @@ multi_items[ "icon" ] = library:create( "ImageLabel" , {
     Image = cfg.icon;
     BackgroundTransparency = 1;
     Name = "\0";
-    Size = dim2(0, 16, 0, 16);
+    Size = dim2(0, 14, 0, 14);
     BorderSizePixel = 0;
     BackgroundColor3 = rgb(255, 255, 255)
 }); library:apply_theme(multi_items[ "icon" ], "accent", "ImageColor3");
