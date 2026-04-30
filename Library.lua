@@ -432,9 +432,7 @@
         end
 
 local function make_gradient_color(c)
-    local h, s, v = c:ToHSV()
-    local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
-    return rgbseq{rgbkey(0, c), rgbkey(1, lighter)}
+    return rgbseq{rgbkey(0, c), rgbkey(1, rgb(255, 255, 255))}
 end
 
 local title_gradients = {}
