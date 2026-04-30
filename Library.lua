@@ -4772,7 +4772,7 @@ Items.TabButtons = Library:Create( "Frame" , {
 return setmetatable(Cfg, Library)
         end
 
-        function Library:SubSection(properties)
+function Library:SubSection(properties)
             local Cfg = {
                 Tabs = properties.Tabs or {"Tab1"};
                 Side = properties.side or properties.Side or "Left";
@@ -4784,7 +4784,7 @@ return setmetatable(Cfg, Library)
 
             local Items = Cfg.Items; do
                 Items.Wrapper = Library:Create("Frame", {
-                    Parent = self.Items[Cfg.Side];
+                    Parent = self.Items.Left or self.Items.Right or self.Items.Elements or self.Items.Page;
                     Name = "\0";
                     Size = dim2(1, 0, Cfg.Size or 0, 0);
                     BorderColor3 = rgb(0,0,0);
@@ -5163,14 +5163,14 @@ Library:Create("UIPadding", {
                     BackgroundTransparency = 1;
                 });
 
-                SubItems.Label = Library:Create("TextLabel", {
+SubItems.Label = Library:Create("TextLabel", {
                     Parent = SubItems.Btn;
                     Name = "\0";
                     Text = tabName;
                     FontFace = Library.Font;
                     TextSize = 12;
                     TextColor3 = themes.preset.text_color;
-                    BackgroundTransparency = not Cfg.TabInfo and 0 or 1;
+                    BackgroundTransparency = (Cfg.TabInfo == nil) and 0 or 1;
                     BackgroundColor3 = themes.preset.tab_background;
                     AutomaticSize = Enum.AutomaticSize.XY;
                     Size = dim2(0,0,1,0);
@@ -5197,7 +5197,7 @@ Library:Create("UIPadding", {
                     Size = dim2(1,0,0,1);
                     ZIndex = 3;
                     BorderSizePixel = 0;
-                    BackgroundTransparency = Cfg.TabInfo and 1 or 0;
+                    BackgroundTransparency = (Cfg.TabInfo ~= nil) and 1 or 0;
                     BackgroundColor3 = themes.preset.accent;
                 }); Library:Themify(SubItems.Indicator, "accent", "BackgroundColor3")
 
