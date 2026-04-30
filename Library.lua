@@ -493,15 +493,21 @@ end
             end
         end 
 
-        function library:create(instance, options)
-            local ins = Instance.new(instance) 
-            
-            for prop, value in options do 
-                ins[prop] = value
-            end
-            
-            return ins 
+function library:create(instance, options)
+    local ins = Instance.new(instance) 
+    
+    for prop, value in options do 
+        ins[prop] = value
+    end
+
+    if ins:IsA("TextLabel") or ins:IsA("TextButton") or ins:IsA("TextBox") then
+        if ins.TextColor3 == rgb(245, 245, 245) then
+            library:apply_theme(ins, "text", "TextColor3")
         end
+    end
+    
+    return ins 
+end
 
         function library:unload_menu() 
             if library[ "items" ] then 
