@@ -1186,10 +1186,18 @@ function Cfg.Set(color, alpha)
                 Cfg.Set()
             end
 
-            Items.ColorpickerObject.MouseButton1Click:Connect(function()
+Items.ColorpickerObject.MouseButton1Click:Connect(function()
                 Cfg.Open = not Cfg.Open
-                Cfg.SetVisible(Cfg.Open)            
+                Cfg.SetVisible(Cfg.Open)
             end)
+
+            -- guard against metatable calls returning boolean
+            local _origSet = Cfg.Set
+            Cfg.Set = function(c, a)
+                if type(c) == "boolean" then c = nil end
+                if type(a) == "boolean" then a = nil end
+                _origSet(c, a)
+            end
 
             InputService.InputChanged:Connect(function(input)
                 if (DraggingSat or DraggingHue or DraggingAlpha) and input.UserInputType == Enum.UserInputType.MouseMovement then
@@ -1231,7 +1239,7 @@ function Cfg.Set(color, alpha)
                 Cfg.Set(Color, 1 - Alpha)
             end)
 
-            Cfg.Set(Cfg.Color, Cfg.Alpha)
+Cfg.Set(type(Cfg.Color) ~= "boolean" and Cfg.Color or nil, type(Cfg.Alpha) ~= "boolean" and Cfg.Alpha or nil)
             ConfigFlags[Cfg.Flag] = Cfg.Set
 
             return setmetatable(Cfg, Library)
@@ -1477,13 +1485,13 @@ function Cfg.Set(color, alpha)
                     });	Library:Themify(Items.PageHolder, "outline", "BackgroundColor3")
                     
 -- Bottom tab bar
-                    Items.TabButtons = Library:Create( "Frame" , {
+Items.TabButtons = Library:Create( "Frame" , {
                         Parent = Items.PageHolder;
                         Name = "\0";
                         AnchorPoint = vec2(0, 1);
                         Position = dim2(0, 1, 1, -1);
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(1, -2, 0, 24);
+                        Size = dim2(1, -2, 0, 32);
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
@@ -1555,17 +1563,16 @@ function Cfg.Set(color, alpha)
                         BackgroundColor3 = themes.preset.outline
                     });	Library:Themify(Items.Outline, "outline", "BackgroundColor3")
 
-                    -- Page content area sits above the bottom tabs
+-- Page content area sits above the bottom tabs
                     Items.PageHolder = Library:Create( "Frame" , {
                         Parent = Items.PageHolder;
                         Name = "\0";
                         Position = dim2(0, 1, 0, 1);
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(1, -2, 1, -26);
+                        Size = dim2(1, -2, 1, -34);
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset.background
                     });	Library:Themify(Items.PageHolder, "background", "BackgroundColor3")
-
                     Items.Fade = Library:Create( "Frame" , {
                         Parent = Items.PageHolder;
                         Name = "\0";
@@ -4786,16 +4793,17 @@ return setmetatable(Cfg, Library)
                     BackgroundColor3 = themes.preset.outline;
                 }); Library:Themify(Items.Wrapper, "outline", "BackgroundColor3")
 
-                Items.TabBar = Library:Create("Frame", {
+Items.TabBar = Library:Create("Frame", {
                     Parent = Items.Wrapper;
                     Name = "\0";
                     Position = dim2(0,1,0,1);
-                    Size = dim2(1,-2,0,20);
+                    Size = dim2(1,-2,0,24);
                     BorderColor3 = rgb(0,0,0);
                     BorderSizePixel = 0;
                     BackgroundColor3 = themes.preset.gradient;
                 }); Library:Themify(Items.TabBar, "gradient", "BackgroundColor3")
 
+                -- accent line at BOTTOM of sub-tab bar
                 Items.AccentLine = Library:Create("Frame", {
                     Parent = Items.TabBar;
                     Name = "\0";
@@ -4803,8 +4811,8 @@ return setmetatable(Cfg, Library)
                     Position = dim2(0,0,1,0);
                     Size = dim2(1,0,0,1);
                     BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset.accent;
-                }); Library:Themify(Items.AccentLine, "accent", "BackgroundColor3")
+                    BackgroundColor3 = themes.preset.outline;
+                }); Library:Themify(Items.AccentLine, "outline", "BackgroundColor3")
 
                 Items.TabButtons = Library:Create("Frame", {
                     Parent = Items.TabBar;
@@ -4828,10 +4836,10 @@ return setmetatable(Cfg, Library)
                     PaddingLeft = dim(0,2);
                 });
 
-                Items.ContentArea = Library:Create("Frame", {
+Items.ContentArea = Library:Create("Frame", {
                     Parent = Items.Wrapper;
                     Name = "\0";
-                    Position = dim2(0,1,0,22);
+                    Position = dim2(0,1,0,26);
                     Size = dim2(1,-2, Cfg.Size and 1 or 0, Cfg.Size and -23 or 0);
                     BorderSizePixel = 0;
                     BackgroundTransparency = 1;
@@ -4887,12 +4895,12 @@ return setmetatable(Cfg, Library)
                     LineJoinMode = Enum.LineJoinMode.Miter;
                 });
 
-                SubItems.Indicator = Library:Create("Frame", {
+SubItems.Indicator = Library:Create("Frame", {
                     Parent = SubItems.Btn;
                     Name = "\0";
-                    AnchorPoint = vec2(0,1);
-                    Position = dim2(0,0,1,1);
-                    Size = dim2(1,0,0,1);
+                    AnchorPoint = vec2(0,0);
+                    Position = dim2(0,0,0,0);
+                    Size = dim2(1,0,0,2);
                     ZIndex = 3;
                     BorderSizePixel = 0;
                     BackgroundTransparency = Cfg.TabInfo and 1 or 0;
@@ -5114,10 +5122,12 @@ function Library:SubSection(properties)
                     Padding = dim(0,0);
                 });
 
-                Library:Create("UIPadding", {
-                    Parent = Items.TabButtons;
-                    PaddingTop = dim(0,3);
-                    PaddingLeft = dim(0,2);
+Library:Create("UIPadding", {
+                    Parent = SubItems.Label;
+                    PaddingLeft = dim(0,8);
+                    PaddingRight = dim(0,8);
+                    PaddingTop = dim(0,2);
+                    PaddingBottom = dim(0,2);
                 });
 
                 -- Scrollable content area
