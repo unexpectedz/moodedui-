@@ -730,24 +730,24 @@ table.insert(title_gradients, items[ "title_gradient" ])
                     BackgroundColor3 = rgb(255, 255, 255)
                 }); 
                 
-                items[ "other_info" ] = library:create( "TextLabel" , {
-                    Parent = items[ "info" ];
-                    RichText = true;
-                    Name = "\0";
-                    TextColor3 = themes.preset.accent;
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = '<font color="rgb(72, 72, 73)">32 days left, </font>' .. cfg.name .. cfg.suffix;
-                    Size = dim2(1, 0, 0, 0);
-                    Position = dim2(0, -10, 0.5, -1);
-                    AnchorPoint = vec2(0, 0.5);
-                    BorderSizePixel = 0;
-                    BackgroundTransparency = 1;
-                    TextXAlignment = Enum.TextXAlignment.Right;
-                    AutomaticSize = Enum.AutomaticSize.XY;
-                    FontFace = fonts.font;
-                    TextSize = 14;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                }); library:apply_theme(items[ "other_info" ], "accent", "TextColor3");        
+items[ "other_info" ] = library:create( "TextLabel" , {
+    Parent = items[ "info" ];
+    RichText = true;
+    Name = "\0";
+    TextColor3 = themes.preset.accent;
+    BorderColor3 = rgb(0, 0, 0);
+    Text = cfg.name .. cfg.suffix;
+    Size = dim2(1, 0, 0, 0);
+    Position = dim2(0, -10, 0.5, -1);
+    AnchorPoint = vec2(0, 0.5);
+    BorderSizePixel = 0;
+    BackgroundTransparency = 1;
+    TextXAlignment = Enum.TextXAlignment.Right;
+    AutomaticSize = Enum.AutomaticSize.XY;
+    FontFace = fonts.font;
+    TextSize = 14;
+    BackgroundColor3 = rgb(255, 255, 255)
+}); library:apply_theme(items[ "other_info" ], "accent", "TextColor3");   
             end 
 
             do -- Other
@@ -928,27 +928,41 @@ library:create( "UICorner" , {
                                     BackgroundColor3 = rgb(25, 25, 29)
                                 });
                                 
-                                multi_items[ "name" ] = library:create( "TextLabel" , {
-                                    FontFace = fonts.font;
-                                    TextColor3 = rgb(62, 62, 63);
-                                    BorderColor3 = rgb(0, 0, 0);
-                                    Text = section;
-                                    Parent = multi_items[ "button" ];
-                                    Name = "\0";
-                                    Size = dim2(0, 0, 1, 0);
-                                    BackgroundTransparency = 1;
-                                    TextXAlignment = Enum.TextXAlignment.Left;
-                                    BorderSizePixel = 0;
-                                    AutomaticSize = Enum.AutomaticSize.XY;
-                                    TextSize = 16;
-                                    BackgroundColor3 = rgb(255, 255, 255)
-                                });
+multi_items[ "icon" ] = library:create( "ImageLabel" , {
+    ImageColor3 = rgb(62, 62, 63);
+    BorderColor3 = rgb(0, 0, 0);
+    Parent = multi_items[ "button" ];
+    AnchorPoint = vec2(0, 0.5);
+    Image = cfg.icon;
+    BackgroundTransparency = 1;
+    Position = dim2(0, 0, 0.5, 0);
+    Name = "\0";
+    Size = dim2(0, 16, 0, 16);
+    BorderSizePixel = 0;
+    BackgroundColor3 = rgb(255, 255, 255)
+}); library:apply_theme(multi_items[ "icon" ], "accent", "ImageColor3");
+
+multi_items[ "name" ] = library:create( "TextLabel" , {
+    FontFace = fonts.font;
+    TextColor3 = rgb(62, 62, 63);
+    BorderColor3 = rgb(0, 0, 0);
+    Text = section;
+    Parent = multi_items[ "button" ];
+    Name = "\0";
+    Size = dim2(0, 0, 1, 0);
+    BackgroundTransparency = 1;
+    TextXAlignment = Enum.TextXAlignment.Left;
+    BorderSizePixel = 0;
+    AutomaticSize = Enum.AutomaticSize.XY;
+    TextSize = 16;
+    BackgroundColor3 = rgb(255, 255, 255)
+});
                                 
-                                library:create( "UIPadding" , {
-                                    Parent = multi_items[ "name" ];
-                                    PaddingRight = dim(0, 5);
-                                    PaddingLeft = dim(0, 5)
-                                });
+library:create( "UIPadding" , {
+    Parent = multi_items[ "button" ];
+    PaddingRight = dim(0, 10);
+    PaddingLeft = dim(0, 6)
+});
                                 
                                 multi_items[ "accent" ] = library:create( "Frame" , {
                                     BorderColor3 = rgb(0, 0, 0);
@@ -1010,9 +1024,10 @@ library:create( "UICorner" , {
                             --
                         end
 
-                        data.text = multi_items[ "name" ]
-                        data.accent = multi_items[ "accent" ]
-                        data.button = multi_items[ "button" ]
+data.text = multi_items[ "name" ]
+data.accent = multi_items[ "accent" ]
+data.button = multi_items[ "button" ]
+data.icon = multi_items[ "icon" ]
                         data.page = multi_items[ "tab" ]
                         data.parent = setmetatable(data, library):sub_tab({}).items[ "tab_parent" ]
                         
@@ -1031,18 +1046,20 @@ library:create( "UICorner" , {
                                 page.page.Size = dim2(1, -20, 1, -20)
                             end
 
-                            if page then
-                                library:tween(page.text, {TextColor3 = rgb(62, 62, 63)})
-                                library:tween(page.accent, {BackgroundTransparency = 1})
-                                library:tween(page.button, {BackgroundTransparency = 1})
+if page then
+    library:tween(page.text, {TextColor3 = rgb(62, 62, 63)})
+    library:tween(page.accent, {BackgroundTransparency = 1})
+    library:tween(page.button, {BackgroundTransparency = 1})
+    if page.icon then library:tween(page.icon, {ImageColor3 = rgb(62, 62, 63)}) end
 
                                 page.page.Visible = false
                                 page.page.Parent = library[ "cache" ] 
                             end 
                             
-                            library:tween(data.text, {TextColor3 = rgb(255, 255, 255)})
-                            library:tween(data.accent, {BackgroundTransparency = 0})
-                            library:tween(data.button, {BackgroundTransparency = 0})
+library:tween(data.text, {TextColor3 = rgb(255, 255, 255)})
+library:tween(data.accent, {BackgroundTransparency = 0})
+library:tween(data.button, {BackgroundTransparency = 0})
+if data.icon then library:tween(data.icon, {ImageColor3 = themes.preset.accent}) end
                             library:tween(data.page, {Size = dim2(1, 0, 1, 0)}, Enum.EasingStyle.Quad, 0.4)
 
                             data.page.Visible = true
@@ -3738,23 +3755,6 @@ library:create( "UIPadding" , {
     PaddingTop = dim(0, 4);
     Parent = items[ "notification" ]
 });
-
-items[ "bar" ] = library:create( "Frame" , {
-    AnchorPoint = vec2(0, 1);
-    Parent = items[ "notification" ];
-    Name = "\0";
-    Position = dim2(0, 8, 1, -4);
-    BorderColor3 = rgb(0, 0, 0);
-    Size = dim2(0, 0, 0, 2);
-    BackgroundTransparency = 0;
-    BorderSizePixel = 0;
-    BackgroundColor3 = themes.preset.accent
-}); library:apply_theme(items[ "bar" ], "accent", "BackgroundColor3");
-
-library:create( "UICorner" , {
-    Parent = items[ "bar" ];
-    CornerRadius = dim(0, 999)
-});
             end
             
             local index = #notifications.notifs + 1
@@ -3767,7 +3767,6 @@ library:create( "UICorner" , {
             items[ "notification" ].Position = dim_offset(flags["notif_x"] or 20, offset + (flags["notif_y"] or 0))
 
             library:tween(items[ "notification" ], {AnchorPoint = vec2(0, 0)}, Enum.EasingStyle.Quad, 1)
-            library:tween(items[ "bar" ], {Size = dim2(1, -16, 0, 2)}, Enum.EasingStyle.Quad, cfg.lifetime)
 
             task.spawn(function()
                 task.wait(cfg.lifetime)
