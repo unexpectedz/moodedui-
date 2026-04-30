@@ -928,14 +928,21 @@ library:create( "UICorner" , {
                                     BackgroundColor3 = rgb(25, 25, 29)
                                 });
                                 
+library:create( "UIListLayout" , {
+    Parent = multi_items[ "button" ];
+    FillDirection = Enum.FillDirection.Horizontal;
+    VerticalAlignment = Enum.VerticalAlignment.Center;
+    Padding = dim(0, 6);
+    SortOrder = Enum.SortOrder.LayoutOrder;
+});
+
 multi_items[ "icon" ] = library:create( "ImageLabel" , {
-    ImageColor3 = rgb(62, 62, 63);
+    ImageColor3 = rgb(72, 72, 73);
     BorderColor3 = rgb(0, 0, 0);
     Parent = multi_items[ "button" ];
-    AnchorPoint = vec2(0, 0.5);
+    LayoutOrder = 1;
     Image = cfg.icon;
     BackgroundTransparency = 1;
-    Position = dim2(0, 0, 0.5, 0);
     Name = "\0";
     Size = dim2(0, 16, 0, 16);
     BorderSizePixel = 0;
@@ -944,10 +951,11 @@ multi_items[ "icon" ] = library:create( "ImageLabel" , {
 
 multi_items[ "name" ] = library:create( "TextLabel" , {
     FontFace = fonts.font;
-    TextColor3 = rgb(62, 62, 63);
+    TextColor3 = rgb(72, 72, 73);
     BorderColor3 = rgb(0, 0, 0);
     Text = section;
     Parent = multi_items[ "button" ];
+    LayoutOrder = 2;
     Name = "\0";
     Size = dim2(0, 0, 1, 0);
     BackgroundTransparency = 1;
@@ -1047,10 +1055,10 @@ data.icon = multi_items[ "icon" ]
                             end
 
 if page then
-    library:tween(page.text, {TextColor3 = rgb(62, 62, 63)})
+    library:tween(page.text, {TextColor3 = rgb(72, 72, 73)})
     library:tween(page.accent, {BackgroundTransparency = 1})
     library:tween(page.button, {BackgroundTransparency = 1})
-    if page.icon then library:tween(page.icon, {ImageColor3 = rgb(62, 62, 63)}) end
+    library:tween(page.icon, {ImageColor3 = rgb(72, 72, 73)})
 
                                 page.page.Visible = false
                                 page.page.Parent = library[ "cache" ] 
@@ -1059,7 +1067,7 @@ if page then
 library:tween(data.text, {TextColor3 = rgb(255, 255, 255)})
 library:tween(data.accent, {BackgroundTransparency = 0})
 library:tween(data.button, {BackgroundTransparency = 0})
-if data.icon then library:tween(data.icon, {ImageColor3 = themes.preset.accent}) end
+library:tween(data.icon, {ImageColor3 = themes.preset.accent})
                             library:tween(data.page, {Size = dim2(1, 0, 1, 0)}, Enum.EasingStyle.Quad, 0.4)
 
                             data.page.Visible = true
