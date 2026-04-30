@@ -431,6 +431,12 @@
             insert(themes.utility[theme][property], instance)
         end
 
+local function make_gradient_color(c)
+    local h, s, v = c:ToHSV()
+    local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
+    return rgbseq{rgbkey(0, c), rgbkey(1, lighter)}
+end
+
 local title_gradients = {}
 
 function library:update_theme(theme, color)
@@ -446,9 +452,7 @@ function library:update_theme(theme, color)
 
     for _, gradient in title_gradients do
         if gradient and gradient.Parent then
-            local h, s, v = color:ToHSV()
-            local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
-            gradient.Color = rgbseq{rgbkey(0, color), rgbkey(1, lighter)}
+gradient.Color = make_gradient_color(color)
         end
     end
 end
@@ -615,9 +619,15 @@ end
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
 
+local function make_gradient_color(c)
+    local h, s, v = c:ToHSV()
+    local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
+    return rgbseq{rgbkey(0, c), rgbkey(1, lighter)}
+end
+
 items[ "title_gradient" ] = library:create( "UIGradient" , {
     Parent = items[ "title" ];
-    Color = rgbseq{rgbkey(0, themes.preset.accent), rgbkey(1, rgb(255, 255, 255))};
+    Color = make_gradient_color(themes.preset.accent);
     Rotation = 0;
 });
 
@@ -3613,9 +3623,9 @@ end})
             local offset = 50
 
             for i, v in notifications.notifs do
-                local Position = vec2(20, offset)
-                library:tween(v, {Position = dim_offset(Position.X, Position.Y)}, Enum.EasingStyle.Quad, 0.4)
-                offset += (v.AbsoluteSize.Y + 10)
+local Position = vec2(flags["notif_x"] or 20, offset)
+library:tween(v, {Position = dim_offset(Position.X, Position.Y)}, Enum.EasingStyle.Quad, 0.4)
+offset += (v.AbsoluteSize.Y + 10)
             end
 
             return offset
@@ -3637,9 +3647,9 @@ end})
         
                 if instance:IsA("TextLabel") then
                     library:tween(instance, {TextTransparency = fading})
-                elseif instance:IsA("Frame") then
-                    library:tween(instance, {BackgroundTransparency = instance.Transparency and 0.6 and is_fading and 1 or 0.6}, Enum.EasingStyle.Quad, 1)
-                end
+elseif instance:IsA("Frame") then
+    library:tween(instance, {BackgroundTransparency = fading}, Enum.EasingStyle.Quad, 1)
+end
             end
         end 
         
@@ -3735,7 +3745,7 @@ items[ "bar" ] = library:create( "Frame" , {
     AnchorPoint = vec2(0, 1);
     Parent = items[ "notification" ];
     Name = "\0";
-    Position = dim2(0, 14, 1, -5);
+    Position = dim2(0, 8, 1, -4);
     BorderColor3 = rgb(0, 0, 0);
     Size = dim2(0, 0, 0, 2);
     BackgroundTransparency = 0;
@@ -3756,10 +3766,10 @@ library:create( "UICorner" , {
             
             local offset = notifications:refresh_notifs()
 
-            items[ "notification" ].Position = dim_offset(20, offset)
+            items[ "notification" ].Position = dim_offset(flags["notif_x"] or 20, offset + (flags["notif_y"] or 0))
 
             library:tween(items[ "notification" ], {AnchorPoint = vec2(0, 0)}, Enum.EasingStyle.Quad, 1)
-            library:tween(items[ "bar" ], {Size = dim2(1, -8, 0, 5)}, Enum.EasingStyle.Quad, cfg.lifetime)
+            library:tween(items[ "bar" ], {Size = dim2(1, -16, 0, 2)}, Enum.EasingStyle.Quad, cfg.lifetime)
 
             task.spawn(function()
                 task.wait(cfg.lifetime)
