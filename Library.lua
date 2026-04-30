@@ -431,6 +431,8 @@
             insert(themes.utility[theme][property], instance)
         end
 
+local title_gradients = {}
+
 function library:update_theme(theme, color)
     for _, property in themes.utility[theme] do 
         for m, object in property do 
@@ -442,12 +444,14 @@ function library:update_theme(theme, color)
 
     themes.preset[theme] = color 
 
-    if items and items[ "title_gradient" ] then
-        local h, s, v = color:ToHSV()
-        local lighter = hsv(h, s * 0.4, math.min(v + 0.35, 1))
-        items[ "title_gradient" ].Color = rgbseq{rgbkey(0, color), rgbkey(1, lighter)}
+    for _, gradient in title_gradients do
+        if gradient and gradient.Parent then
+            local h, s, v = color:ToHSV()
+            local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
+            gradient.Color = rgbseq{rgbkey(0, color), rgbkey(1, lighter)}
+        end
     end
-end 
+end
 
         function library:connection(signal, callback)
             local connection = signal:Connect(callback)
@@ -617,13 +621,7 @@ items[ "title_gradient" ] = library:create( "UIGradient" , {
     Rotation = 0;
 });
 
-library:connection(run.Heartbeat, function()
-    if items[ "title_gradient" ] then
-        local h, s, v = themes.preset.accent:ToHSV()
-        local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
-        items[ "title_gradient" ].Color = rgbseq{rgbkey(0, themes.preset.accent), rgbkey(1, lighter)}
-    end
-end)
+table.insert(title_gradients, items[ "title_gradient" ])
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
                     Parent = items[ "main" ];
