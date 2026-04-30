@@ -1,3 +1,11 @@
+--[[
+
+    Milenium Library
+    -> Made by @finobe 
+    -> Kind of got bored idk what to do with life
+    -> Idk who or why this got leaked, ui was VERY popular and high in demand with customers
+]]
+
 -- Variables 
     local uis = game:GetService("UserInputService") 
     local players = game:GetService("Players") 
@@ -181,12 +189,12 @@
         
         local Medium = Register_Font("Medium", 200, "Normal", {
             Id = "Medium.ttf",
-            Font = game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/Inter_28pt-Medium.ttf"),
+            Font = game:HttpGet("https://raw.githubusercontent.com/i77lhm/storage/refs/heads/main/fonts/Inter_28pt-Medium.ttf"),
         })
 
         local SemiBold = Register_Font("SemiBold", 200, "Normal", {
             Id = "SemiBold.ttf",
-            Font = game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/Inter_28pt-SemiBold.ttf"),
+            Font = game:HttpGet("https://raw.githubusercontent.com/i77lhm/storage/refs/heads/main/fonts/Inter_28pt-SemiBold.ttf"),
         })
 
         fonts = {
