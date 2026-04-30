@@ -431,18 +431,23 @@
             insert(themes.utility[theme][property], instance)
         end
 
-        function library:update_theme(theme, color)
-            for _, property in themes.utility[theme] do 
-
-                for m, object in property do 
-                    if object[_] == themes.preset[theme] then 
-                        object[_] = color 
-                    end 
-                end 
+function library:update_theme(theme, color)
+    for _, property in themes.utility[theme] do 
+        for m, object in property do 
+            if object[_] == themes.preset[theme] then 
+                object[_] = color 
             end 
-
-            themes.preset[theme] = color 
         end 
+    end 
+
+    themes.preset[theme] = color 
+
+    if items and items[ "title_gradient" ] then
+        local h, s, v = color:ToHSV()
+        local lighter = hsv(h, s * 0.4, math.min(v + 0.35, 1))
+        items[ "title_gradient" ].Color = rgbseq{rgbkey(0, color), rgbkey(1, lighter)}
+    end
+end 
 
         function library:connection(signal, callback)
             local connection = signal:Connect(callback)
@@ -606,7 +611,7 @@
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
 
-library:create( "UIGradient" , {
+items[ "title_gradient" ] = library:create( "UIGradient" , {
     Parent = items[ "title" ];
     Color = rgbseq{rgbkey(0, themes.preset.accent), rgbkey(1, rgb(255, 255, 255))};
     Rotation = 0;
@@ -845,8 +850,8 @@ library:create( "UIGradient" , {
 
 items[ "underline" ] = library:create( "Frame" , {
     AnchorPoint = vec2(0, 1);
-    Parent = items[ "button" ];
-    Position = dim2(0, 8, 1, -2);
+    Parent = items[ "name" ];
+    Position = dim2(0, 5, 1, 1);
     BorderColor3 = rgb(0, 0, 0);
     Size = dim2(0, 0, 0, 2);
     BorderSizePixel = 0;
@@ -1070,7 +1075,7 @@ library:tween(selected_tab[ 6 ], {Size = dim2(0, 0, 0, 2), BackgroundTransparenc
                 library:tween(items[ "button" ], {BackgroundTransparency = 0})
                 library:tween(items[ "icon" ], {ImageColor3 = themes.preset.accent})
                 library:tween(items[ "name" ], {TextColor3 = rgb(255, 255, 255)})
-library:tween(items[ "underline" ], {Size = dim2(1, -16, 0, 2), BackgroundTransparency = 0})
+library:tween(items[ "underline" ], {Size = dim2(1, -10, 0, 2), BackgroundTransparency = 0})
                 library:tween(items[ "tab_holder" ], {Size = dim2(1, -196, 1, -81)}, Enum.EasingStyle.Quad, 0.4)
                 
                 items[ "tab_holder" ].Visible = true 
