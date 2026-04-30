@@ -965,17 +965,17 @@ multi_items[ "name" ] = library:create( "TextLabel" , {
                                     PaddingLeft = dim(0, 5)
                                 });
                                 
-                                multi_items[ "accent" ] = library:create( "Frame" , {
-                                    BorderColor3 = rgb(0, 0, 0);
-                                    AnchorPoint = vec2(0, 1);
-                                    Parent = multi_items[ "button" ];
-                                    BackgroundTransparency = 1;
-                                    Position = dim2(0, 10, 1, 4);
-                                    Name = "\0";
-                                    Size = dim2(1, -20, 0, 6);
-                                    BorderSizePixel = 0;
-                                    BackgroundColor3 = themes.preset.accent
-                                }); library:apply_theme(multi_items[ "accent" ], "accent", "BackgroundColor3");
+multi_items[ "accent" ] = library:create( "Frame" , {
+    BorderColor3 = rgb(0, 0, 0);
+    AnchorPoint = vec2(0, 1);
+    Parent = multi_items[ "name" ];
+    BackgroundTransparency = 1;
+    Position = dim2(0, 0, 1, 4);
+    Name = "\0";
+    Size = dim2(1, 0, 0, 6);
+    BorderSizePixel = 0;
+    BackgroundColor3 = themes.preset.accent
+}); library:apply_theme(multi_items[ "accent" ], "accent", "BackgroundColor3");
                                 
                                 library:create( "UICorner" , {
                                     Parent = multi_items[ "accent" ];
