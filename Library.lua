@@ -3860,10 +3860,28 @@ library:create( "UIPadding" , {
             CornerRadius = dim(0, 7)
         });
 
-        library:create("UIStroke", {
+library:create("UIStroke", {
             Color = rgb(23, 23, 29);
             Parent = items["watermark_frame"];
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        });
+
+        library:create("ImageLabel", {
+            ImageColor3 = rgb(0, 0, 0);
+            ScaleType = Enum.ScaleType.Slice;
+            Parent = items["watermark_frame"];
+            BorderColor3 = rgb(0, 0, 0);
+            Name = "\0";
+            BackgroundColor3 = rgb(255, 255, 255);
+            Size = dim2(1, 75, 1, 75);
+            AnchorPoint = vec2(0.5, 0.5);
+            Image = "rbxassetid://112971167999062";
+            BackgroundTransparency = 1;
+            Position = dim2(0.5, 0, 0.5, 0);
+            SliceScale = 0.75;
+            ZIndex = -100;
+            BorderSizePixel = 0;
+            SliceCenter = rect(vec2(112, 112), vec2(147, 147))
         });
 
         library:create("UIPadding", {
@@ -3993,7 +4011,7 @@ library:create( "UIPadding" , {
         local drag_start
         local start_pos
 
-        items["watermark_frame"].InputBegan:Connect(function(input)
+items["watermark_frame"].InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = true
                 drag_start = input.Position
@@ -4014,7 +4032,7 @@ library:create( "UIPadding" , {
                 local frame = items["watermark_frame"]
                 local new_x = math.clamp(start_pos.X.Offset + delta.X, 0, vp.X - frame.AbsoluteSize.X)
                 local new_y = math.clamp(start_pos.Y.Offset + delta.Y, 0, vp.Y - frame.AbsoluteSize.Y)
-                frame.Position = dim2(0, new_x, 0, new_y)
+                library:tween(frame, {Position = dim2(0, new_x, 0, new_y)}, Enum.EasingStyle.Linear, 0.05)
             end
         end)
 
