@@ -4559,10 +4559,15 @@ local row_instances = {}
             end
         end
 
-        task.delay(0.5, refresh_keybind_list)
-        getgenv()._kb_refresh = refresh_keybind_list
+getgenv()._kb_refresh = refresh_keybind_list
 
-        library:connection(run.Heartbeat, function()
+        task.spawn(function()
+            while task.wait(1) do
+                refresh_keybind_list()
+            end
+        end)
+
+library:connection(run.Heartbeat, function()
             for _, kb in keybind_registry do
                 if kb.kb_label and kb.kb_label.Parent then
                     local key = kb.key
@@ -4574,6 +4579,12 @@ local row_instances = {}
                     local accent_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
                     kb.kb_label.Text = '<font color="#' .. accent_hex .. '">' .. text .. '</font> <font color="#606060">(' .. mode .. ')</font>'
                 end
+            end
+        end)
+
+        run.Heartbeat:Connect(function()
+            if #keybind_registry ~= #row_instances then
+                refresh_keybind_list()
             end
         end)
     end
