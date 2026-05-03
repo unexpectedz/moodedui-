@@ -482,12 +482,17 @@ function library:update_theme(theme, color)
 
     themes.preset[theme] = color 
 
-    for _, gradient in title_gradients do
-        if gradient and gradient.Parent then
-gradient.Color = make_gradient_color(color)
+local function title_accent_hex()
+        return string.format("%02X%02X%02X", math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255))
+    end
+
+    for _, title in title_gradients do
+        if title and title.Parent then
+            local name_part = title.Text:match('^<font color="#ffffff">(.-)</font>') or ""
+            local suffix_part = title.Text:match('</font><font color="#%x+">(.-)</font>$') or ""
+            title.Text = '<font color="#ffffff">' .. name_part .. '</font><font color="#' .. title_accent_hex() .. '">' .. suffix_part .. '</font>'
         end
     end
-end
 
         function library:connection(signal, callback)
             local connection = signal:Connect(callback)
@@ -642,13 +647,17 @@ local main_stroke = library:create( "UIStroke" , {
                 });
 
                 local accent = themes.preset.accent
+local function title_accent_hex()
+    local c = themes.preset.accent
+    return string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255))
+end
+
 items[ "title" ] = library:create( "TextLabel" , {
     FontFace = fonts.font;
     BorderColor3 = rgb(0, 0, 0);
-    Text = name;
     Parent = items[ "side_frame" ];
     Name = "__title";
-    Text = cfg.name .. cfg.suffix;
+    Text = '<font color="#ffffff">' .. cfg.name .. '</font><font color="#' .. title_accent_hex() .. '">' .. cfg.suffix .. '</font>';
     BackgroundTransparency = 1;
     Size = dim2(1, 0, 0, 70);
     TextColor3 = rgb(255, 255, 255);
@@ -658,19 +667,7 @@ items[ "title" ] = library:create( "TextLabel" , {
     BackgroundColor3 = rgb(255, 255, 255)
 });
 
-local function make_gradient_color(c)
-    local h, s, v = c:ToHSV()
-    local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
-    return rgbseq{rgbkey(0, c), rgbkey(1, lighter)}
-end
-
-items[ "title_gradient" ] = library:create( "UIGradient" , {
-    Parent = items[ "title" ];
-    Color = make_gradient_color(themes.preset.accent);
-    Rotation = 0;
-});
-
-table.insert(title_gradients, items[ "title_gradient" ])
+table.insert(title_gradients, items[ "title" ])
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
                     Parent = items[ "main" ];
