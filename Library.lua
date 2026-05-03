@@ -2087,11 +2087,53 @@ items[ "slider" ] = library:create( "TextButton" , {
                 end
             end)
 
-            library:connection(uis.InputEnded, function(input)
+library:connection(uis.InputEnded, function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     cfg.dragging = false
                     library:tween(items[ "value" ], {TextColor3 = rgb(72, 72, 73)}, Enum.EasingStyle.Quad, 0.2) 
                 end 
+            end)
+
+            local value_box = library:create("TextBox", {
+                Parent = items[ "slider_object" ];
+                FontFace = fonts.small;
+                Text = "";
+                PlaceholderText = tostring(cfg.default);
+                TextColor3 = rgb(245, 245, 245);
+                PlaceholderColor3 = rgb(72, 72, 73);
+                TextSize = 16;
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                Size = dim2(1, 0, 0, 0);
+                Position = dim2(0, 6, 0, 0);
+                AutomaticSize = Enum.AutomaticSize.XY;
+                TextXAlignment = Enum.TextXAlignment.Right;
+                Visible = false;
+                ClearTextOnFocus = true;
+                ZIndex = 5;
+                BackgroundColor3 = rgb(255, 255, 255);
+            });
+
+            library:create("UIPadding", {
+                Parent = value_box;
+                PaddingRight = dim(0, 5);
+                PaddingLeft = dim(0, 5);
+            });
+
+            items[ "value" ].MouseButton1Click:Connect(function()
+                items[ "value" ].Visible = false
+                value_box.Visible = true
+                value_box:CaptureFocus()
+            end)
+
+            value_box.FocusLost:Connect(function(entered)
+                local num = tonumber(value_box.Text)
+                if num then
+                    cfg.set(num)
+                end
+                value_box.Visible = false
+                items[ "value" ].Visible = true
+                value_box.Text = ""
             end)
 
             if cfg.seperator then 
