@@ -2101,7 +2101,9 @@ library:connection(uis.InputEnded, function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     cfg.dragging = false
                     library:tween(items[ "value" ], {TextColor3 = rgb(72, 72, 73)}, Enum.EasingStyle.Quad, 0.2)
-                    library:tween(slider_stroke, {Color = rgb(40, 40, 42)})
+                    if slider_stroke and slider_stroke.Parent then
+                        library:tween(slider_stroke, {Color = rgb(40, 40, 42)})
+                    end
                 end 
             end)
 
