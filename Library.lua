@@ -4064,8 +4064,10 @@ local holder = library:create("Frame", {
         local _, game_lbl = make_segment("98653404676495", cfg.game_name, 3)
         make_divider(4)
         local _, ping_lbl = make_segment("106882300995960", "0ms", 5)
-        make_divider(6)
-        local _, fps_lbl = make_segment("111257007544426", "0 fps", 7)
+make_divider(6)
+        local _, fps_lbl = make_segment("89950776907377", "0 fps", 7)
+        make_divider(8)
+        local _, user_lbl = make_segment("107067785111491", lp.Name, 9)
 
         local dragging = false
         local drag_start
