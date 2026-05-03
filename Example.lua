@@ -10,6 +10,13 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/unexp
 
 local window = library:window({name = "nebula", suffix = "tech", gameInfo = "Milenium for Counter-Strike: Global Offensive"})
 
+window.set_loading(0.3, "loading assets...")
+task.wait(0.5)
+window.set_loading(0.6, "loading configs...")
+task.wait(0.5)
+window.set_loading(1, "done!")
+window.finish_loading()
+
 local wm = library:watermark({
     name = "viosploit",
     game_name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
