@@ -3982,27 +3982,8 @@ offset += (v.AbsoluteSize.Y + 10)
             return offset
         end
         
-        function notifications:fade(path, is_fading)
-            local fading = is_fading and 1 or 0 
-            
-            library:tween(path, {BackgroundTransparency = fading}, Enum.EasingStyle.Quad, 1)
-
-            for _, instance in path:GetDescendants() do 
-                if not instance:IsA("GuiObject") then 
-                    if instance:IsA("UIStroke") then
-                        library:tween(instance, {Transparency = fading}, Enum.EasingStyle.Quad, 1)
-                    end
-        
-                    continue
-                end 
-        
-                if instance:IsA("TextLabel") then
-                    library:tween(instance, {TextTransparency = fading})
-elseif instance:IsA("Frame") then
-    library:tween(instance, {BackgroundTransparency = fading}, Enum.EasingStyle.Quad, 1)
-end
-            end
-        end 
+function notifications:fade(path, is_fading)
+        end
         
         function notifications:create_notification(options)
             local cfg = {
@@ -4136,17 +4117,12 @@ local items = cfg.items; do
 
             library:tween(items[ "notification" ], {AnchorPoint = vec2(0, 0)}, Enum.EasingStyle.Quad, 1)
 
-            task.spawn(function()
+task.spawn(function()
                 task.wait(cfg.lifetime)
                 
                 notifications.notifs[index] = nil
-                
-                notifications:fade(items[ "notification" ], true)
-                
-                library:tween(items[ "notification" ], {AnchorPoint = vec2(1, 0)}, Enum.EasingStyle.Quad, 1)
+                notifications:refresh_notifs()
 
-                task.wait(1)
-        
                 items[ "notification" ]:Destroy() 
             end)
         end
