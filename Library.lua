@@ -474,17 +474,15 @@ function library:update_theme(theme, color)
 
     themes.preset[theme] = color 
 
-local function title_accent_hex()
-        return string.format("%02X%02X%02X", math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255))
-    end
-
-    for _, title in title_gradients do
+for _, title in title_gradients do
         if title and title.Parent then
-            local name_part = title.Text:match('^<font color="#ffffff">(.-)</font>') or ""
-            local suffix_part = title.Text:match('</font><font color="#%x+">(.-)</font>$') or ""
-            title.Text = '<font color="#ffffff">' .. name_part .. '</font><font color="#' .. title_accent_hex() .. '">' .. suffix_part .. '</font>'
+            local hex = string.format("%02X%02X%02X", math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255))
+            local n = title:GetAttribute("n") or ""
+            local s = title:GetAttribute("s") or ""
+            title.Text = '<font color="#ffffff">' .. n .. '</font><font color="#' .. hex .. '">' .. s .. '</font>'
         end
     end
+end
 
         function library:connection(signal, callback)
             local connection = signal:Connect(callback)
