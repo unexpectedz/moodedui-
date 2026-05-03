@@ -4061,23 +4061,25 @@ local holder = library:create("Frame", {
             return holder, lbl
         end
 
-local _wm_parts = cfg.name:match("^(%a+)(%a+)$") and {cfg.name:match("^(%a+)(%a+)$")} or {cfg.name, ""}
+local _wm_suffix = options.suffix or ""
         local _wm_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
-
         local name_lbl = library:create("TextLabel", {
             Parent = items["watermark_frame"];
             FontFace = fonts.font;
-            Text = '<font color="#ffffff">' .. _wm_parts[1] .. '</font><font color="#' .. _wm_hex .. '">' .. _wm_parts[2] .. '</font>';
+            Text = '<font color="#ffffff">' .. cfg.name .. '</font><font color="#' .. _wm_hex .. '">' .. _wm_suffix .. '</font>';
             RichText = true;
             TextColor3 = rgb(255, 255, 255);
             TextSize = 13;
             Size = dim2(0, 0, 0, 14);
-            AutomaticSize = Enum.AutomaticSize.X;
+            AutomaticSize = Enum.AutomaticSize.XY;
             BackgroundTransparency = 1;
             BorderSizePixel = 0;
             BackgroundColor3 = rgb(255, 255, 255);
             LayoutOrder = 1;
         });
+        name_lbl:SetAttribute("n", cfg.name)
+        name_lbl:SetAttribute("s", _wm_suffix)
+        table.insert(title_gradients, name_lbl)
 
         make_divider(2)
         local _, game_lbl = make_segment("98653404676495", cfg.game_name, 3)
