@@ -636,11 +636,7 @@ local main_stroke = library:create( "UIStroke" , {
                     PaddingLeft = dim(0, 10)
                 });
 
-                local accent = themes.preset.accent
-local function title_accent_hex()
-    local c = themes.preset.accent
-    return string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255))
-end
+local accent = themes.preset.accent
 
 items[ "title" ] = library:create( "TextLabel" , {
     FontFace = fonts.font;
@@ -657,6 +653,10 @@ items[ "title" ] = library:create( "TextLabel" , {
     BackgroundColor3 = rgb(255, 255, 255)
 });
 
+local _hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
+items[ "title" ].Text = '<font color="#ffffff">' .. cfg.name .. '</font><font color="#' .. _hex .. '">' .. cfg.suffix .. '</font>'
+items[ "title" ]:SetAttribute("n", cfg.name)
+items[ "title" ]:SetAttribute("s", cfg.suffix)
 table.insert(title_gradients, items[ "title" ])
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
