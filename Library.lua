@@ -3882,7 +3882,7 @@ library:create( "UIPadding" , {
             Padding = dim(0, 8);
         });
 
-        local icon_instances = {} -- track all icons so we can recolor them
+        local icon_instances = {}
 
         local function make_divider(order)
             library:create("Frame", {
@@ -3947,7 +3947,6 @@ library:create( "UIPadding" , {
             return holder, lbl, icon
         end
 
-        -- Script name (no icon, uses accent color)
         local name_holder = library:create("Frame", {
             Parent = items["watermark_frame"];
             BackgroundTransparency = 1;
@@ -3983,16 +3982,11 @@ library:create( "UIPadding" , {
 
         make_divider(2)
 
-        -- Game name with controller icon
-        local _, game_lbl = make_segment("11522971436", cfg.game_name, 3)
+        local _, game_lbl = make_segment("11522971482", cfg.game_name, 3)
         make_divider(4)
-
-        -- Ping with wifi icon
-        local _, ping_lbl = make_segment("105127187178989", "0ms", 5)
+        local _, ping_lbl = make_segment("96448345234387", "0ms", 5)
         make_divider(6)
-
-        -- FPS with monitor/computer icon
-        local _, fps_lbl = make_segment("12684119225", "0 fps", 7)
+        local _, fps_lbl = make_segment("12684119292", "0 fps", 7)
 
         -- Dragging
         local dragging = false
@@ -4024,7 +4018,6 @@ library:create( "UIPadding" , {
             end
         end)
 
-        -- Update loop for ping and fps
         local last_time = tick()
         local frame_count = 0
         local current_fps = 0
@@ -4045,7 +4038,6 @@ library:create( "UIPadding" , {
             ping_lbl.Text = (ok and tostring(ping) or "0") .. "ms"
             fps_lbl.Text = tostring(current_fps) .. " fps"
 
-            -- Keep icons matching text theme color
             for _, icon in icon_instances do
                 if icon and icon.Parent then
                     icon.ImageColor3 = themes.preset.text
