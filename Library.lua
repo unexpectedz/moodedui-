@@ -657,10 +657,10 @@ items[ "title" ] = library:create( "TextLabel" , {
     BackgroundColor3 = rgb(255, 255, 255)
 });
 
-local _hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
-items[ "title" ].Text = '<font color="#ffffff">' .. cfg.name .. '</font><font color="#' .. _hex .. '">' .. cfg.suffix .. '</font>'
 items[ "title" ]:SetAttribute("n", cfg.name)
 items[ "title" ]:SetAttribute("s", cfg.suffix)
+local _hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
+items[ "title" ].Text = '<font color="#ffffff">' .. cfg.name .. '</font><font color="#' .. _hex .. '">' .. cfg.suffix .. '</font>'
 table.insert(title_gradients, items[ "title" ])
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
@@ -4061,11 +4061,15 @@ local holder = library:create("Frame", {
             return holder, lbl
         end
 
+local _wm_parts = cfg.name:match("^(%a+)(%a+)$") and {cfg.name:match("^(%a+)(%a+)$")} or {cfg.name, ""}
+        local _wm_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
+
         local name_lbl = library:create("TextLabel", {
             Parent = items["watermark_frame"];
             FontFace = fonts.font;
-            Text = cfg.name;
-            TextColor3 = themes.preset.accent;
+            Text = '<font color="#ffffff">' .. _wm_parts[1] .. '</font><font color="#' .. _wm_hex .. '">' .. _wm_parts[2] .. '</font>';
+            RichText = true;
+            TextColor3 = rgb(255, 255, 255);
             TextSize = 13;
             Size = dim2(0, 0, 0, 14);
             AutomaticSize = Enum.AutomaticSize.X;
@@ -4074,7 +4078,6 @@ local holder = library:create("Frame", {
             BackgroundColor3 = rgb(255, 255, 255);
             LayoutOrder = 1;
         });
-        library:apply_theme(name_lbl, "accent", "TextColor3")
 
         make_divider(2)
         local _, game_lbl = make_segment("98653404676495", cfg.game_name, 3)
