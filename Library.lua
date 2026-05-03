@@ -3848,7 +3848,7 @@ library:create( "UIPadding" , {
             Parent = library["items"];
             Name = "\0";
             Position = dim2(0, 10, 0, 10);
-            Size = dim2(0, 0, 0, 28);
+            Size = dim2(0, 0, 0, 30);
             BorderSizePixel = 0;
             BackgroundColor3 = rgb(19, 19, 21);
             AutomaticSize = Enum.AutomaticSize.X;
@@ -3870,8 +3870,8 @@ library:create( "UIPadding" , {
             Parent = items["watermark_frame"];
             PaddingLeft = dim(0, 10);
             PaddingRight = dim(0, 10);
-            PaddingTop = dim(0, 0);
-            PaddingBottom = dim(0, 0);
+            PaddingTop = dim(0, 6);
+            PaddingBottom = dim(0, 6);
         });
 
         library:create("UIListLayout", {
@@ -3895,11 +3895,43 @@ library:create( "UIPadding" , {
             });
         end
 
-local function make_segment(icon_id, text_str, order)
+        local function make_icon(parent, icon_id)
+            local icon = library:create("ImageLabel", {
+                Parent = parent;
+                Image = "rbxassetid://" .. icon_id;
+                ImageColor3 = themes.preset.text;
+                Size = dim2(0, 14, 0, 14);
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                LayoutOrder = 1;
+            });
+            table.insert(icon_instances, icon)
+            return icon
+        end
+
+        local function make_label(parent, text, order)
+            local lbl = library:create("TextLabel", {
+                Parent = parent;
+                FontFace = fonts.font;
+                Text = text;
+                TextColor3 = themes.preset.text;
+                TextSize = 13;
+                Size = dim2(0, 0, 0, 14);
+                AutomaticSize = Enum.AutomaticSize.X;
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                BackgroundColor3 = rgb(255, 255, 255);
+                LayoutOrder = order or 2;
+            });
+            library:apply_theme(lbl, "text", "TextColor3")
+            return lbl
+        end
+
+        local function make_segment(icon_id, text_str, order)
             local holder = library:create("Frame", {
                 Parent = items["watermark_frame"];
                 BackgroundTransparency = 1;
-                Size = dim2(0, 0, 0, 28);
+                Size = dim2(0, 0, 0, 14);
                 AutomaticSize = Enum.AutomaticSize.X;
                 BorderSizePixel = 0;
                 BackgroundColor3 = rgb(255, 255, 255);
@@ -3914,65 +3946,20 @@ local function make_segment(icon_id, text_str, order)
                 Padding = dim(0, 4);
             });
 
-            local icon
-            if icon_id then
-                icon = library:create("ImageLabel", {
-                    Parent = holder;
-                    Image = "rbxassetid://" .. icon_id;
-                    ImageColor3 = themes.preset.text;
-                    Size = dim2(0, 16, 0, 16);
-                    BackgroundTransparency = 1;
-                    BorderSizePixel = 0;
-                    ScaleType = Enum.ScaleType.Fit;
-                    BackgroundColor3 = rgb(255, 255, 255);
-                    LayoutOrder = 1;
-                });
-                table.insert(icon_instances, icon)
-            end
+            make_icon(holder, icon_id)
+            local lbl = make_label(holder, text_str)
 
-            local lbl = library:create("TextLabel", {
-                Parent = holder;
-                FontFace = fonts.font;
-                Text = text_str;
-                TextColor3 = themes.preset.text;
-                TextSize = 13;
-                Size = dim2(0, 0, 0, 28);
-                AutomaticSize = Enum.AutomaticSize.X;
-                BackgroundTransparency = 1;
-                BorderSizePixel = 0;
-                BackgroundColor3 = rgb(255, 255, 255);
-                LayoutOrder = 2;
-            });
-            library:apply_theme(lbl, "text", "TextColor3")
-
-            return holder, lbl, icon
+            return holder, lbl
         end
 
-        local name_holder = library:create("Frame", {
-            Parent = items["watermark_frame"];
-            BackgroundTransparency = 1;
-            Size = dim2(0, 0, 1, 0);
-            AutomaticSize = Enum.AutomaticSize.X;
-            BorderSizePixel = 0;
-            BackgroundColor3 = rgb(255, 255, 255);
-            LayoutOrder = 1;
-        });
-
-        library:create("UIListLayout", {
-            Parent = name_holder;
-            FillDirection = Enum.FillDirection.Horizontal;
-            VerticalAlignment = Enum.VerticalAlignment.Center;
-            SortOrder = Enum.SortOrder.LayoutOrder;
-            Padding = dim(0, 0);
-        });
-
+        -- Script name
         local name_lbl = library:create("TextLabel", {
-            Parent = name_holder;
+            Parent = items["watermark_frame"];
             FontFace = fonts.font;
             Text = cfg.name;
             TextColor3 = themes.preset.accent;
             TextSize = 13;
-            Size = dim2(0, 0, 1, 0);
+            Size = dim2(0, 0, 0, 14);
             AutomaticSize = Enum.AutomaticSize.X;
             BackgroundTransparency = 1;
             BorderSizePixel = 0;
@@ -3982,7 +3969,6 @@ local function make_segment(icon_id, text_str, order)
         library:apply_theme(name_lbl, "accent", "TextColor3")
 
         make_divider(2)
-
         local _, game_lbl = make_segment("11522971482", cfg.game_name, 3)
         make_divider(4)
         local _, ping_lbl = make_segment("96448345234387", "0ms", 5)
@@ -3994,7 +3980,7 @@ local function make_segment(icon_id, text_str, order)
         local drag_start
         local start_pos
 
-items["watermark_frame"].InputBegan:Connect(function(input)
+        items["watermark_frame"].InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = true
                 drag_start = input.Position
