@@ -4483,33 +4483,28 @@ make_divider(6)
             end
         end)
 
-        -- Update loop
-        library:connection(run.Heartbeat, function()
-            -- clear old rows
-            for _, child in rows_frame:GetChildren() do
-                if not child:IsA("UIListLayout") then
-                    child:Destroy()
-                end
-            end
+local row_instances = {}
 
-            local has_any = false
+        local function refresh_keybind_list()
+            for _, r in row_instances do
+                r:Destroy()
+            end
+            row_instances = {}
 
             for _, kb in keybind_registry do
                 local key = kb.key
                 local mode = kb.mode
 
-                if not key or tostring(key) == "Enums" or key == "NONE" then continue end
-
-                has_any = true
-
-                local text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
+                local text = "NONE"
+                if key and tostring(key) ~= "Enums" and key ~= "NONE" then
+                    text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
+                end
 
                 local row = library:create("Frame", {
                     Parent = rows_frame;
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
-                    Size = dim2(1, 0, 0, 0);
-                    AutomaticSize = Enum.AutomaticSize.Y;
+                    Size = dim2(1, 0, 0, 18);
                 });
 
                 library:create("UIListLayout", {
@@ -4528,7 +4523,8 @@ make_divider(6)
                     TextSize = 13;
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.XY;
+                    Size = dim2(0, 0, 1, 0);
+                    AutomaticSize = Enum.AutomaticSize.X;
                     TextXAlignment = Enum.TextXAlignment.Left;
                     LayoutOrder = 1;
                     BackgroundColor3 = rgb(255, 255, 255);
@@ -4536,7 +4532,7 @@ make_divider(6)
 
                 local accent_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
 
-                library:create("TextLabel", {
+                local val_lbl = library:create("TextLabel", {
                     Parent = row;
                     FontFace = fonts.font;
                     Text = '<font color="#' .. accent_hex .. '">' .. text .. '</font> <font color="#606060">(' .. mode .. ')</font>';
@@ -4545,14 +4541,33 @@ make_divider(6)
                     TextSize = 13;
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.XY;
+                    Size = dim2(0, 0, 1, 0);
+                    AutomaticSize = Enum.AutomaticSize.X;
                     TextXAlignment = Enum.TextXAlignment.Right;
                     LayoutOrder = 2;
                     BackgroundColor3 = rgb(255, 255, 255);
                 });
-            end
 
-            kb_frame.Visible = has_any
+                table.insert(row_instances, row)
+                kb.kb_label = val_lbl
+            end
+        end
+
+        refresh_keybind_list()
+
+        library:connection(run.Heartbeat, function()
+            for _, kb in keybind_registry do
+                if kb.kb_label and kb.kb_label.Parent then
+                    local key = kb.key
+                    local mode = kb.mode
+                    local text = "NONE"
+                    if key and tostring(key) ~= "Enums" and key ~= "NONE" then
+                        text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
+                    end
+                    local accent_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
+                    kb.kb_label.Text = '<font color="#' .. accent_hex .. '">' .. text .. '</font> <font color="#606060">(' .. mode .. ')</font>'
+                end
+            end
         end)
     end
 --
