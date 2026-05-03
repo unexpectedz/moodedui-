@@ -8,11 +8,11 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/unexp
   Also I haven't even got a clue how this got leaked since loads of people had it.
 ]]
 
-local window = library:window({name = "nebula", suffix = "tech", gameInfo = "Milenium for Counter-Strike: Global Offensive"})
+local window = library:window({name = "vio", suffix = "sploit", gameInfo = "Milenium for Counter-Strike: Global Offensive"})
 
 window.set_loading(0.3, "loading assets...")
 task.wait(0.5)
-window.set_loading(0.6, "loading configs...")
+window.set_loading(0.6, "loading script...")
 task.wait(0.5)
 window.set_loading(1, "done!")
 window.finish_loading()
