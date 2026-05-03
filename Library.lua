@@ -4553,9 +4553,10 @@ for _, kb in keybind_registry do
                     BackgroundColor3 = rgb(255, 255, 255);
                 });
 
-                table.insert(row_instances, row)
+table.insert(row_instances, row)
                 kb.kb_label = val_lbl
             end
+        end
         end
 
 getgenv()._kb_refresh = refresh_keybind_list
