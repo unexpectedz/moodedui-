@@ -3844,8 +3844,15 @@ library:create( "UIPadding" , {
 
         local items = cfg.items
 
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "Watermark"
+        screenGui.ResetOnSpawn = false
+        screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        screenGui.IgnoreGuiInset = true
+        screenGui.Parent = lp:WaitForChild("PlayerGui")
+
         items["watermark_frame"] = library:create("Frame", {
-            Parent = library["items"];
+            Parent = screenGui;
             Name = "\0";
             Position = dim2(0, 10, 0, 10);
             Size = dim2(0, 0, 0, 30);
@@ -3895,39 +3902,6 @@ library:create( "UIPadding" , {
             });
         end
 
-        local function make_icon(parent, icon_id)
-local icon = library:create("ImageLabel", {
-                Parent = parent;
-                Image = "rbxassetid://" .. icon_id;
-                ImageColor3 = themes.preset.text;
-                Size = dim2(0, 14, 0, 14);
-                BackgroundTransparency = 1;
-                BorderSizePixel = 0;
-                ScaleType = Enum.ScaleType.Fit;
-                LayoutOrder = 1;
-            });
-            table.insert(icon_instances, icon)
-            return icon
-        end
-
-        local function make_label(parent, text, order)
-            local lbl = library:create("TextLabel", {
-                Parent = parent;
-                FontFace = fonts.font;
-                Text = text;
-                TextColor3 = themes.preset.text;
-                TextSize = 13;
-                Size = dim2(0, 0, 0, 14);
-                AutomaticSize = Enum.AutomaticSize.X;
-                BackgroundTransparency = 1;
-                BorderSizePixel = 0;
-                BackgroundColor3 = rgb(255, 255, 255);
-                LayoutOrder = order or 2;
-            });
-            library:apply_theme(lbl, "text", "TextColor3")
-            return lbl
-        end
-
         local function make_segment(icon_id, text_str, order)
             local holder = library:create("Frame", {
                 Parent = items["watermark_frame"];
@@ -3947,13 +3921,34 @@ local icon = library:create("ImageLabel", {
                 Padding = dim(0, 4);
             });
 
-            make_icon(holder, icon_id)
-            local lbl = make_label(holder, text_str)
+            local icon = Instance.new("ImageLabel")
+            icon.Image = "rbxassetid://" .. icon_id
+            icon.Size = UDim2.new(0, 14, 0, 14)
+            icon.BackgroundTransparency = 1
+            icon.ScaleType = Enum.ScaleType.Fit
+            icon.ImageColor3 = themes.preset.text
+            icon.LayoutOrder = 1
+            icon.Parent = holder
+            table.insert(icon_instances, icon)
+
+            local lbl = library:create("TextLabel", {
+                Parent = holder;
+                FontFace = fonts.font;
+                Text = text_str;
+                TextColor3 = themes.preset.text;
+                TextSize = 13;
+                Size = dim2(0, 0, 0, 14);
+                AutomaticSize = Enum.AutomaticSize.X;
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                BackgroundColor3 = rgb(255, 255, 255);
+                LayoutOrder = 2;
+            });
+            library:apply_theme(lbl, "text", "TextColor3")
 
             return holder, lbl
         end
 
-        -- Script name
         local name_lbl = library:create("TextLabel", {
             Parent = items["watermark_frame"];
             FontFace = fonts.font;
@@ -3970,13 +3965,12 @@ local icon = library:create("ImageLabel", {
         library:apply_theme(name_lbl, "accent", "TextColor3")
 
         make_divider(2)
-local _, game_lbl = make_segment("98653404676495", cfg.game_name, 3)
+        local _, game_lbl = make_segment("98653404676495", cfg.game_name, 3)
         make_divider(4)
         local _, ping_lbl = make_segment("106882300995960", "0ms", 5)
         make_divider(6)
         local _, fps_lbl = make_segment("111257007544426", "0 fps", 7)
 
-        -- Dragging
         local dragging = false
         local drag_start
         local start_pos
@@ -4034,11 +4028,12 @@ local _, game_lbl = make_segment("98653404676495", cfg.game_name, 3)
         end)
 
         function cfg.set_visible(bool)
-            items["watermark_frame"].Visible = bool
+            screenGui.Enabled = bool
         end
 
         return setmetatable(cfg, library)
     end
 --
+
 
 return library
