@@ -3874,7 +3874,7 @@ library:create( "UIPadding" , {
             PaddingBottom = dim(0, 0);
         });
 
-        local layout = library:create("UIListLayout", {
+        library:create("UIListLayout", {
             Parent = items["watermark_frame"];
             FillDirection = Enum.FillDirection.Horizontal;
             VerticalAlignment = Enum.VerticalAlignment.Center;
@@ -3882,7 +3882,19 @@ library:create( "UIPadding" , {
             Padding = dim(0, 8);
         });
 
-        -- Helper: icon + label pair
+        local icon_instances = {} -- track all icons so we can recolor them
+
+        local function make_divider(order)
+            library:create("Frame", {
+                Parent = items["watermark_frame"];
+                Size = dim2(0, 1, 0, 14);
+                BackgroundColor3 = rgb(50, 50, 52);
+                BorderSizePixel = 0;
+                BackgroundTransparency = 0;
+                LayoutOrder = order;
+            });
+        end
+
         local function make_segment(icon_id, text_str, order)
             local holder = library:create("Frame", {
                 Parent = items["watermark_frame"];
@@ -3902,24 +3914,26 @@ library:create( "UIPadding" , {
                 Padding = dim(0, 4);
             });
 
+            local icon
             if icon_id then
-                library:create("ImageLabel", {
+                icon = library:create("ImageLabel", {
                     Parent = holder;
-                    Image = icon_id;
-                    ImageColor3 = themes.preset.accent;
+                    Image = "rbxassetid://" .. icon_id;
+                    ImageColor3 = themes.preset.text;
                     Size = dim2(0, 14, 0, 14);
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(255, 255, 255);
                     LayoutOrder = 1;
                 });
+                table.insert(icon_instances, icon)
             end
 
             local lbl = library:create("TextLabel", {
                 Parent = holder;
                 FontFace = fonts.font;
                 Text = text_str;
-                TextColor3 = rgb(200, 200, 200);
+                TextColor3 = themes.preset.text;
                 TextSize = 13;
                 Size = dim2(0, 0, 1, 0);
                 AutomaticSize = Enum.AutomaticSize.X;
@@ -3928,23 +3942,12 @@ library:create( "UIPadding" , {
                 BackgroundColor3 = rgb(255, 255, 255);
                 LayoutOrder = 2;
             });
+            library:apply_theme(lbl, "text", "TextColor3")
 
-            return holder, lbl
+            return holder, lbl, icon
         end
 
-        -- Divider helper
-        local function make_divider(order)
-            library:create("Frame", {
-                Parent = items["watermark_frame"];
-                Size = dim2(0, 1, 0, 14);
-                BackgroundColor3 = rgb(50, 50, 52);
-                BorderSizePixel = 0;
-                BackgroundTransparency = 0;
-                LayoutOrder = order;
-            });
-        end
-
-        -- Script name (no icon)
+        -- Script name (no icon, uses accent color)
         local name_holder = library:create("Frame", {
             Parent = items["watermark_frame"];
             BackgroundTransparency = 1;
@@ -3963,7 +3966,7 @@ library:create( "UIPadding" , {
             Padding = dim(0, 0);
         });
 
-        library:create("TextLabel", {
+        local name_lbl = library:create("TextLabel", {
             Parent = name_holder;
             FontFace = fonts.font;
             Text = cfg.name;
@@ -3976,56 +3979,79 @@ library:create( "UIPadding" , {
             BackgroundColor3 = rgb(255, 255, 255);
             LayoutOrder = 1;
         });
+        library:apply_theme(name_lbl, "accent", "TextColor3")
 
         make_divider(2)
 
-        -- Game name with controller icon (rbxassetid for a gamepad)
-        local _, game_lbl = make_segment("rbxassetid://3926305904", cfg.game_name, 3)
+        -- Game name with controller icon
+        local _, game_lbl = make_segment("11522971482", cfg.game_name, 3)
         make_divider(4)
 
         -- Ping with wifi icon
-        local _, ping_lbl = make_segment("rbxassetid://3926305904", "0ms", 5)
-        ping_lbl.Text = "0ms"
-
+        local _, ping_lbl = make_segment("96448345234387", "0ms", 5)
         make_divider(6)
 
         -- FPS with monitor/computer icon
-        local _, fps_lbl = make_segment("rbxassetid://3926307971", "0 fps", 7)
-        fps_lbl.Text = "0 fps"
+        local _, fps_lbl = make_segment("12684119292", "0 fps", 7)
 
-        -- Different accent colors for the icons
-        -- Controller icon
-        local segments = items["watermark_frame"]:GetChildren()
-        
-        -- Update loop
-        local step_connection = run.RenderStepped:Connect(function()
-            local ping = stats.Network.ServerStatsItem["Data Ping"]:GetValue()
-            local fps = math.floor(1 / run.RenderStepped:Wait())
-            ping_lbl.Text = math.floor(ping) .. "ms"
-            fps_lbl.Text = fps .. " fps"
+        -- Dragging
+        local dragging = false
+        local drag_start
+        local start_pos
+
+        items["watermark_frame"].InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                drag_start = input.Position
+                start_pos = items["watermark_frame"].Position
+            end
         end)
 
-        insert(library.connections, step_connection)
-
-        -- Swap to correct icons now that assets are known
-        -- Controller: 3926305904 | Wifi/signal: 3926307971 | Monitor: 3926305904
-        -- Roblox's own UI icons we can use reliably:
-        local ICON_CONTROLLER = "rbxassetid://3926305904"  -- gamepad
-        local ICON_WIFI       = "rbxassetid://3926307971"  -- signal bars  
-        local ICON_MONITOR    = "rbxassetid://3926307971"  -- display screen
-
-        for _, child in items["watermark_frame"]:GetChildren() do
-            if child:IsA("Frame") and child.LayoutOrder == 3 then
-                local img = child:FindFirstChildOfClass("ImageLabel")
-                if img then img.Image = ICON_CONTROLLER end
-            elseif child:IsA("Frame") and child.LayoutOrder == 5 then
-                local img = child:FindFirstChildOfClass("ImageLabel")
-                if img then img.Image = ICON_WIFI end
-            elseif child:IsA("Frame") and child.LayoutOrder == 7 then
-                local img = child:FindFirstChildOfClass("ImageLabel")
-                if img then img.Image = ICON_MONITOR end
+        items["watermark_frame"].InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = false
             end
-        end
+        end)
+
+        library:connection(uis.InputChanged, function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                local delta = input.Position - drag_start
+                local vp = camera.ViewportSize
+                local frame = items["watermark_frame"]
+                local new_x = math.clamp(start_pos.X.Offset + delta.X, 0, vp.X - frame.AbsoluteSize.X)
+                local new_y = math.clamp(start_pos.Y.Offset + delta.Y, 0, vp.Y - frame.AbsoluteSize.Y)
+                frame.Position = dim2(0, new_x, 0, new_y)
+            end
+        end)
+
+        -- Update loop for ping and fps
+        local last_time = tick()
+        local frame_count = 0
+        local current_fps = 0
+
+        library:connection(run.RenderStepped, function()
+            frame_count += 1
+            local now = tick()
+            if now - last_time >= 0.5 then
+                current_fps = math.floor(frame_count / (now - last_time))
+                frame_count = 0
+                last_time = now
+            end
+
+            local ok, ping = pcall(function()
+                return math.floor(stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+            end)
+
+            ping_lbl.Text = (ok and tostring(ping) or "0") .. "ms"
+            fps_lbl.Text = tostring(current_fps) .. " fps"
+
+            -- Keep icons matching text theme color
+            for _, icon in icon_instances do
+                if icon and icon.Parent then
+                    icon.ImageColor3 = themes.preset.text
+                end
+            end
+        end)
 
         function cfg.set_visible(bool)
             items["watermark_frame"].Visible = bool
