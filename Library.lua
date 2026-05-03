@@ -264,17 +264,17 @@ local themes = {
                     local viewport_x = camera.ViewportSize.X
                     local viewport_y = camera.ViewportSize.Y
 
-local current_size = dim2(
+                    local current_size = dim2(
                         start_size.X.Scale,
                         math.clamp(
                             start_size.X.Offset + (input.Position.X - start.X),
-                            200,
+                            og_size.X.Offset,
                             viewport_x
                         ),
                         start_size.Y.Scale,
                         math.clamp(
                             start_size.Y.Offset + (input.Position.Y - start.Y),
-                            150,
+                            og_size.Y.Offset,
                             viewport_y
                         )
                     )
