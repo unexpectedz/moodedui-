@@ -3896,13 +3896,14 @@ library:create( "UIPadding" , {
         end
 
         local function make_icon(parent, icon_id)
-            local icon = library:create("ImageLabel", {
+local icon = library:create("ImageLabel", {
                 Parent = parent;
                 Image = "rbxassetid://" .. icon_id;
                 ImageColor3 = themes.preset.text;
                 Size = dim2(0, 14, 0, 14);
                 BackgroundTransparency = 1;
                 BorderSizePixel = 0;
+                ScaleType = Enum.ScaleType.Fit;
                 LayoutOrder = 1;
             });
             table.insert(icon_instances, icon)
