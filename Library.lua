@@ -2075,11 +2075,20 @@ items[ "slider" ] = library:create( "TextButton" , {
                 cfg.callback(flags[cfg.flag])
             end
 
+items[ "slider" ].MouseEnter:Connect(function()
+                library:tween(slider_stroke, {Color = themes.preset.accent})
+            end)
+
+            items[ "slider" ].MouseLeave:Connect(function()
+                if not cfg.dragging then
+                    library:tween(slider_stroke, {Color = rgb(40, 40, 42)})
+                end
+            end)
+
             items[ "slider" ].MouseButton1Down:Connect(function()
                 cfg.dragging = true 
                 library:tween(items[ "value" ], {TextColor3 = rgb(255, 255, 255)}, Enum.EasingStyle.Quad, 0.2)
             end)
-
             library:connection(uis.InputChanged, function(input)
                 if cfg.dragging and input.UserInputType == Enum.UserInputType.MouseMovement then 
                     local size_x = (input.Position.X - items[ "slider" ].AbsolutePosition.X) / items[ "slider" ].AbsoluteSize.X
@@ -2091,7 +2100,8 @@ items[ "slider" ] = library:create( "TextButton" , {
 library:connection(uis.InputEnded, function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     cfg.dragging = false
-                    library:tween(items[ "value" ], {TextColor3 = rgb(72, 72, 73)}, Enum.EasingStyle.Quad, 0.2) 
+                    library:tween(items[ "value" ], {TextColor3 = rgb(72, 72, 73)}, Enum.EasingStyle.Quad, 0.2)
+                    library:tween(slider_stroke, {Color = rgb(40, 40, 42)})
                 end 
             end)
 
@@ -2308,7 +2318,21 @@ items[ "dropdown" ] = library:create( "TextButton" , {
                         PaddingRight = dim(0, 5)
                     });
 
-items[ "indicator" ] = nil;
+items[ "indicator" ] = library:create( "TextLabel" , {
+                        FontFace = fonts.font;
+                        TextColor3 = rgb(86, 86, 87);
+                        BorderColor3 = rgb(0, 0, 0);
+                        Parent = items[ "dropdown" ];
+                        AnchorPoint = vec2(1, 0.5);
+                        Text = ">";
+                        BackgroundTransparency = 1;
+                        Position = dim2(1, -5, 0.5, 0);
+                        Name = "\0";
+                        Size = dim2(0, 10, 0, 14);
+                        BorderSizePixel = 0;
+                        TextSize = 12;
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    });
 
                 -- Element Holder
                     items[ "dropdown_holder" ] = library:create( "Frame" , {
@@ -2453,12 +2477,14 @@ items[ "dropdown" ].MouseButton1Click:Connect(function()
                 cfg.set_visible(cfg.open)
             end)
 
-            items[ "dropdown" ].MouseEnter:Connect(function()
+items[ "dropdown" ].MouseEnter:Connect(function()
                 library:tween(items[ "dropdown" ], {BackgroundColor3 = rgb(40, 40, 42)})
+                library:tween(dropdown_stroke, {Color = themes.preset.accent})
             end)
 
             items[ "dropdown" ].MouseLeave:Connect(function()
                 library:tween(items[ "dropdown" ], {BackgroundColor3 = rgb(33, 33, 35)})
+                library:tween(dropdown_stroke, {Color = rgb(40, 40, 42)})
             end)
 
             if cfg.seperator then 
@@ -2774,11 +2800,12 @@ items[ "dropdown" ].MouseButton1Click:Connect(function()
                         CornerRadius = dim(0, 9999)
                     });
                     
-                    library:create( "UIStroke" , {
-                        Color = rgb(255, 255, 255);
-                        Parent = items[ "satvalpicker" ];
-                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
-                    });
+local dropdown_stroke = library:create( "UIStroke" , {
+                    Parent = items[ "dropdown" ];
+                    Color = rgb(40, 40, 42);
+                    Thickness = 1;
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                });
                     
                     items[ "hue_gradient" ] = library:create( "TextButton" , {
                         Parent = items[ "colorpicker_components" ];
@@ -2821,11 +2848,12 @@ items[ "dropdown" ].MouseButton1Click:Connect(function()
                         CornerRadius = dim(0, 9999)
                     });
                     
-                    library:create( "UIStroke" , {
-                        Color = rgb(255, 255, 255);
-                        Parent = items[ "hue_picker" ];
-                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
-                    });
+local slider_stroke = library:create( "UIStroke" , {
+                    Parent = items[ "slider" ];
+                    Color = rgb(40, 40, 42);
+                    Thickness = 1;
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                });
                     
                     items[ "alpha_gradient" ] = library:create( "TextButton" , {
                         Parent = items[ "colorpicker_components" ];
