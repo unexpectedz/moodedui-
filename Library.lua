@@ -637,6 +637,10 @@ local main_stroke = library:create( "UIStroke" , {
                 });
 
 local accent = themes.preset.accent
+local function title_accent_hex()
+    local c = themes.preset.accent
+    return string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255))
+end
 
 items[ "title" ] = library:create( "TextLabel" , {
     FontFace = fonts.font;
