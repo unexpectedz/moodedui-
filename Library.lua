@@ -790,11 +790,107 @@ items[ "other_info" ] = library:create( "TextLabel" , {
     BackgroundColor3 = rgb(255, 255, 255)
 }); library:apply_theme(items[ "other_info" ], "accent", "TextColor3");
             end 
-
-            do -- Other
+do -- Other
                 library:draggify(items[ "main" ])
                 library:resizify(items[ "main" ])
             end 
+
+            -- Loading Screen
+            local loading_frame = library:create("Frame", {
+                Parent = items["main"];
+                Name = "\0";
+                Size = dim2(1, 0, 1, 0);
+                Position = dim2(0, 0, 0, 0);
+                BorderSizePixel = 0;
+                BackgroundColor3 = rgb(14, 14, 16);
+                ZIndex = 100;
+            });
+            library:apply_theme(loading_frame, "background", "BackgroundColor3")
+
+            library:create("UICorner", {
+                Parent = loading_frame;
+                CornerRadius = dim(0, 10)
+            });
+
+            local loading_title = library:create("TextLabel", {
+                Parent = loading_frame;
+                FontFace = fonts.font;
+                Text = cfg.name .. cfg.suffix;
+                TextColor3 = themes.preset.accent;
+                TextSize = 22;
+                AnchorPoint = vec2(0.5, 0.5);
+                Position = dim2(0.5, 0, 0.5, -20);
+                Size = dim2(0, 0, 0, 0);
+                AutomaticSize = Enum.AutomaticSize.XY;
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                BackgroundColor3 = rgb(255, 255, 255);
+                ZIndex = 101;
+            });
+            library:apply_theme(loading_title, "accent", "TextColor3")
+
+            local loading_sub = library:create("TextLabel", {
+                Parent = loading_frame;
+                FontFace = fonts.small;
+                Text = "loading...";
+                TextColor3 = rgb(72, 72, 73);
+                TextSize = 14;
+                AnchorPoint = vec2(0.5, 0.5);
+                Position = dim2(0.5, 0, 0.5, 5);
+                Size = dim2(0, 0, 0, 0);
+                AutomaticSize = Enum.AutomaticSize.XY;
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                BackgroundColor3 = rgb(255, 255, 255);
+                ZIndex = 101;
+            });
+
+            local loading_bar_bg = library:create("Frame", {
+                Parent = loading_frame;
+                AnchorPoint = vec2(0.5, 0.5);
+                Position = dim2(0.5, 0, 0.5, 30);
+                Size = dim2(0, 200, 0, 4);
+                BorderSizePixel = 0;
+                BackgroundColor3 = rgb(33, 33, 35);
+                ZIndex = 101;
+            });
+
+            library:create("UICorner", {
+                Parent = loading_bar_bg;
+                CornerRadius = dim(0, 999)
+            });
+
+            local loading_bar_fill = library:create("Frame", {
+                Parent = loading_bar_bg;
+                Size = dim2(0, 0, 1, 0);
+                BorderSizePixel = 0;
+                BackgroundColor3 = themes.preset.accent;
+                ZIndex = 102;
+            });
+            library:apply_theme(loading_bar_fill, "accent", "BackgroundColor3")
+
+            library:create("UICorner", {
+                Parent = loading_bar_fill;
+                CornerRadius = dim(0, 999)
+            });
+
+            function cfg.set_loading(progress, text)
+                loading_sub.Text = text or "loading..."
+                library:tween(loading_bar_fill, {Size = dim2(progress, 0, 1, 0)}, Enum.EasingStyle.Quad, 0.3)
+            end
+
+            function cfg.finish_loading()
+                library:tween(loading_bar_fill, {Size = dim2(1, 0, 1, 0)}, Enum.EasingStyle.Quad, 0.3)
+                task.wait(0.4)
+                library:tween(loading_frame, {BackgroundTransparency = 1}, Enum.EasingStyle.Quad, 0.5)
+                library:tween(loading_title, {TextTransparency = 1}, Enum.EasingStyle.Quad, 0.5)
+                library:tween(loading_sub, {TextTransparency = 1}, Enum.EasingStyle.Quad, 0.5)
+                library:tween(loading_bar_bg, {BackgroundTransparency = 1}, Enum.EasingStyle.Quad, 0.5)
+                library:tween(loading_bar_fill, {BackgroundTransparency = 1}, Enum.EasingStyle.Quad, 0.5)
+                task.wait(0.5)
+                loading_frame:Destroy()
+            end
+            --
 
             function cfg.toggle_menu(bool) 
                 -- WIP 
