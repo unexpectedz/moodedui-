@@ -2458,7 +2458,7 @@ items[ "dropdown" ] = library:create( "TextButton" , {
                 end
             end
 
-            items[ "dropdown_object" ].MouseButton1Click:Connect(function()
+items[ "dropdown" ].MouseButton1Click:Connect(function()
                 cfg.open = not cfg.open 
                 
                 cfg.set_visible(cfg.open)
