@@ -2964,10 +2964,106 @@ items[ "slider" ] = library:create( "TextButton" , {
                 cfg.set()
             end
 
-            items[ "colorpicker" ].MouseButton1Click:Connect(function()
+items[ "colorpicker" ].MouseButton1Click:Connect(function()
                 cfg.open = not cfg.open 
 
                 cfg.set_visible(cfg.open)            
+            end)
+
+            local copied_color = nil
+
+            local cp_menu = library:create("Frame", {
+                Parent = library["items"];
+                Name = "\0";
+                Size = dim2(0, 100, 0, 0);
+                BackgroundColor3 = rgb(22, 22, 24);
+                BorderSizePixel = 0;
+                ClipsDescendants = true;
+                ZIndex = 9999;
+                Visible = true;
+            });
+
+            library:create("UICorner", {
+                Parent = cp_menu;
+                CornerRadius = dim(0, 4)
+            });
+
+            library:create("UIStroke", {
+                Parent = cp_menu;
+                Color = rgb(40, 40, 42);
+                Thickness = 1;
+                ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+            });
+
+            library:create("UIListLayout", {
+                Parent = cp_menu;
+                Padding = dim(0, 0);
+                SortOrder = Enum.SortOrder.LayoutOrder
+            });
+
+            local function make_cp_button(text, order, callback)
+                local btn = library:create("TextButton", {
+                    Parent = cp_menu;
+                    FontFace = fonts.small;
+                    Text = text;
+                    TextColor3 = rgb(200, 200, 200);
+                    TextSize = 13;
+                    Size = dim2(1, 0, 0, 22);
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    AutoButtonColor = false;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    ZIndex = 9999;
+                    LayoutOrder = order;
+                    BackgroundColor3 = rgb(22, 22, 24);
+                });
+
+                library:create("UIPadding", {
+                    Parent = btn;
+                    PaddingLeft = dim(0, 8);
+                });
+
+                btn.MouseEnter:Connect(function()
+                    library:tween(btn, {BackgroundTransparency = 0}, Enum.EasingStyle.Quad, 0.1)
+                end)
+
+                btn.MouseLeave:Connect(function()
+                    library:tween(btn, {BackgroundTransparency = 1}, Enum.EasingStyle.Quad, 0.1)
+                end)
+
+                btn.MouseButton1Click:Connect(function()
+                    callback()
+                    library:tween(cp_menu, {Size = dim2(0, 100, 0, 0)}, Enum.EasingStyle.Quad, 0.15)
+                end)
+
+                return btn
+            end
+
+            make_cp_button("Copy colour", 1, function()
+                copied_color = {
+                    Color = flags[cfg.flag].Color;
+                    Transparency = flags[cfg.flag].Transparency;
+                }
+                getgenv().cp_clipboard = copied_color
+            end)
+
+            make_cp_button("Paste colour", 2, function()
+                if getgenv().cp_clipboard then
+                    cfg.set(getgenv().cp_clipboard.Color, getgenv().cp_clipboard.Transparency)
+                end
+            end)
+
+            items[ "colorpicker" ].MouseButton2Click:Connect(function()
+                cp_menu.Position = dim_offset(items["colorpicker"].AbsolutePosition.X - 50, items["colorpicker"].AbsolutePosition.Y + 20)
+                library:tween(cp_menu, {Size = dim2(0, 100, 0, 44)}, Enum.EasingStyle.Quad, 0.15)
+            end)
+
+            library:connection(uis.InputBegan, function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if not library:mouse_in_frame(cp_menu) then
+                        library:tween(cp_menu, {Size = dim2(0, 100, 0, 0)}, Enum.EasingStyle.Quad, 0.15)
+                    end
+                end
             end)
 
             uis.InputChanged:Connect(function(input)
