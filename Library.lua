@@ -4557,8 +4557,6 @@ table.insert(row_instances, row)
                 kb.kb_label = val_lbl
             end
         end
-        end
-
 getgenv()._kb_refresh = refresh_keybind_list
 
         task.spawn(function()
