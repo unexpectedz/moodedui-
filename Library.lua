@@ -2268,10 +2268,10 @@ items[ "dropdown" ] = library:create( "TextButton" , {
                         Parent = items[ "dropdown_object" ];
                         Name = "\0";
                         Position = dim2(0, 4, 0, 23);
-                        Size = dim2(1, -8, 0, 14);
+                        Size = dim2(1, -8, 0, 20);
                         BorderSizePixel = 0;
                         TextSize = 14;
-                        BackgroundColor3 = rgb(22, 22, 24)
+                        BackgroundColor3 = rgb(33, 33, 35)
                     });
 
                     library:create( "UICorner" , {
@@ -2308,19 +2308,7 @@ items[ "dropdown" ] = library:create( "TextButton" , {
                         PaddingRight = dim(0, 5)
                     });
 
-                    items[ "indicator" ] = library:create( "ImageLabel" , {
-                        ImageColor3 = rgb(86, 86, 87);
-                        BorderColor3 = rgb(0, 0, 0);
-                        Parent = items[ "dropdown" ];
-                        AnchorPoint = vec2(1, 0.5);
-                        Image = "rbxassetid://101025591575185";
-                        BackgroundTransparency = 1;
-                        Position = dim2(1, -5, 0.5, 0);
-                        Name = "\0";
-                        Size = dim2(0, 12, 0, 12);
-                        BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255)
-                    });
+items[ "indicator" ] = nil;
 
                 -- Element Holder
                     items[ "dropdown_holder" ] = library:create( "Frame" , {
@@ -2461,7 +2449,16 @@ items[ "dropdown" ] = library:create( "TextButton" , {
 items[ "dropdown" ].MouseButton1Click:Connect(function()
                 cfg.open = not cfg.open 
                 
+                library:tween(items[ "dropdown" ], {BackgroundColor3 = cfg.open and rgb(33, 33, 35) or rgb(33, 33, 35)})
                 cfg.set_visible(cfg.open)
+            end)
+
+            items[ "dropdown" ].MouseEnter:Connect(function()
+                library:tween(items[ "dropdown" ], {BackgroundColor3 = rgb(40, 40, 42)})
+            end)
+
+            items[ "dropdown" ].MouseLeave:Connect(function()
+                library:tween(items[ "dropdown" ], {BackgroundColor3 = rgb(33, 33, 35)})
             end)
 
             if cfg.seperator then 
