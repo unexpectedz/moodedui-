@@ -3383,7 +3383,7 @@ local cp_menu = library:create("Frame", {
                     });
                     
 items[ "right_components" ] = library:create( "Frame" , {
-                        Parent = items[ "dropdown_object" ];
+                        Parent = items[ "keybind_element" ];
                         Name = "\0";
                         Position = dim2(1, 0, 0, 0);
                         BorderColor3 = rgb(0, 0, 0);
