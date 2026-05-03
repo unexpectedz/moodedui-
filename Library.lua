@@ -1991,8 +1991,8 @@ library:apply_theme(items[ "name" ], "text", "TextColor3")
                     SortOrder = Enum.SortOrder.LayoutOrder;
                     FillDirection = Enum.FillDirection.Horizontal
                 });
-                
-                items[ "slider" ] = library:create( "TextButton" , {
+
+items[ "slider" ] = library:create( "TextButton" , {
                     FontFace = fonts.small;
                     TextColor3 = rgb(0, 0, 0);
                     BorderColor3 = rgb(0, 0, 0);
@@ -2002,46 +2002,38 @@ library:apply_theme(items[ "name" ], "text", "TextColor3")
                     Parent = items[ "right_components" ];
                     Name = "\0";
                     Position = dim2(1, 0, 0, 0);
-                    Size = dim2(1, -4, 0, 4);
+                    Size = dim2(1, -4, 0, 14);
                     BorderSizePixel = 0;
                     TextSize = 14;
-                    BackgroundColor3 = rgb(33, 33, 35)
+                    BackgroundColor3 = rgb(22, 22, 24)
                 });
-                
+
                 library:create( "UICorner" , {
                     Parent = items[ "slider" ];
-                    CornerRadius = dim(0, 999)
+                    CornerRadius = dim(0, 3)
                 });
-                
+
+                library:create( "UIStroke" , {
+                    Parent = items[ "slider" ];
+                    Color = rgb(40, 40, 42);
+                    Thickness = 1;
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                });
+
                 items[ "fill" ] = library:create( "Frame" , {
                     Name = "\0";
                     Parent = items[ "slider" ];
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(0.5, 0, 0, 4);
+                    Size = dim2(0.5, 0, 1, 0);
                     BorderSizePixel = 0;
                     BackgroundColor3 = themes.preset.accent
-                });  library:apply_theme(items[ "fill" ], "accent", "BackgroundColor3");
-                
+                }); library:apply_theme(items[ "fill" ], "accent", "BackgroundColor3");
+
                 library:create( "UICorner" , {
                     Parent = items[ "fill" ];
-                    CornerRadius = dim(0, 999)
+                    CornerRadius = dim(0, 3)
                 });
                 
-                items[ "circle" ] = library:create( "Frame" , {
-                    AnchorPoint = vec2(0.5, 0.5);
-                    Parent = items[ "fill" ];
-                    Name = "\0";
-                    Position = dim2(1, 0, 0.5, 0);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(0, 12, 0, 12);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(244, 244, 244)
-                });
-                
-                library:create( "UICorner" , {
-                    Parent = items[ "circle" ];
-                    CornerRadius = dim(0, 999)
-                });
                 
                 library:create( "UIPadding" , {
                     Parent = items[ "right_components" ];
@@ -2075,7 +2067,7 @@ library:apply_theme(items[ "name" ], "text", "TextColor3")
             function cfg.set(value)
                 cfg.value = clamp(library:round(value, cfg.intervals), cfg.min, cfg.max)
 
-                library:tween(items[ "fill" ], {Size = dim2((cfg.value - cfg.min) / (cfg.max - cfg.min), cfg.value == cfg.min and 0 or -4, 0, 2)}, Enum.EasingStyle.Linear, 0.05)
+                library:tween(items[ "fill" ], {Size = dim2((cfg.value - cfg.min) / (cfg.max - cfg.min), 0, 1, 0)}, Enum.EasingStyle.Linear, 0.05)
                 items[ "value" ].Text = tostring(cfg.value) .. cfg.suffix
 
                 flags[cfg.flag] = cfg.value
