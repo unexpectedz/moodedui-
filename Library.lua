@@ -2973,12 +2973,11 @@ items[ "colorpicker" ].MouseButton1Click:Connect(function()
 local cp_menu = library:create("Frame", {
                 Parent = library["items"];
                 Name = "\0";
-                Size = dim2(0, 110, 0, 0);
+                Size = dim2(0, 110, 0, 48);
                 BackgroundColor3 = rgb(22, 22, 24);
                 BorderSizePixel = 0;
-                ClipsDescendants = true;
                 ZIndex = 10000;
-                Visible = true;
+                Visible = false;
             });
 
             library:create("UICorner", {
@@ -3033,7 +3032,7 @@ local cp_menu = library:create("Frame", {
 
                 btn.MouseButton1Click:Connect(function()
                     callback()
-                    cp_menu.Size = dim2(0, 110, 0, 0)
+                    cp_menu.Visible = false
                 end)
 
                 return btn
@@ -3057,17 +3056,16 @@ local cp_menu = library:create("Frame", {
                     items["colorpicker"].AbsolutePosition.X - 55,
                     items["colorpicker"].AbsolutePosition.Y + 22
                 )
-                cp_menu.Size = dim2(0, 110, 0, 48)
+                cp_menu.Visible = true
             end)
 
             library:connection(uis.InputBegan, function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
                     if not library:mouse_in_frame(cp_menu) then
-                        cp_menu.Size = dim2(0, 110, 0, 0)
+                        cp_menu.Visible = false
                     end
                 end
-            end)
-            uis.InputChanged:Connect(function(input)
+            end)            uis.InputChanged:Connect(function(input)
                 if (dragging_sat or dragging_hue or dragging_alpha) and input.UserInputType == Enum.UserInputType.MouseMovement then
                     cfg.update_color() 
                 end
