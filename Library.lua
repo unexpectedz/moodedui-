@@ -3866,24 +3866,6 @@ library:create("UIStroke", {
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         });
 
-        library:create("ImageLabel", {
-            ImageColor3 = rgb(0, 0, 0);
-            ScaleType = Enum.ScaleType.Slice;
-            Parent = items["watermark_frame"];
-            BorderColor3 = rgb(0, 0, 0);
-            Name = "\0";
-            BackgroundColor3 = rgb(255, 255, 255);
-            Size = dim2(1, 75, 1, 75);
-            AnchorPoint = vec2(0.5, 0.5);
-            Image = "rbxassetid://112971167999062";
-            BackgroundTransparency = 1;
-            Position = dim2(0.5, 0, 0.5, 0);
-            SliceScale = 0.75;
-            ZIndex = -100;
-            BorderSizePixel = 0;
-            SliceCenter = rect(vec2(112, 112), vec2(147, 147))
-        });
-
         library:create("UIPadding", {
             Parent = items["watermark_frame"];
             PaddingLeft = dim(0, 10);
