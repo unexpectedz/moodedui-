@@ -2120,15 +2120,10 @@ library:connection(uis.InputEnded, function(input)
                 PaddingLeft = dim(0, 5);
             });
 
-local function cfg_path(name)
-                if not isfolder(library.directory) then makefolder(library.directory) end
-                if not isfolder(library.directory .. "/configs") then makefolder(library.directory .. "/configs") end
-                local path1 = library.directory .. "/configs/" .. name .. ".cfg"
-                local path2 = library.directory .. "\\configs\\" .. name .. ".cfg"
-                if isfile(path1) then return path1 end
-                if isfile(path2) then return path2 end
-                return path1
-            end
+            items[ "value" ].MouseButton1Click:Connect(function()
+                items[ "value" ].Visible = false
+                value_box.Visible = true
+                value_box:CaptureFocus()
             end)
 
             value_box.FocusLost:Connect(function(entered)
