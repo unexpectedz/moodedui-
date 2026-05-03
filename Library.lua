@@ -3895,11 +3895,11 @@ library:create( "UIPadding" , {
             });
         end
 
-        local function make_segment(icon_id, text_str, order)
+local function make_segment(icon_id, text_str, order)
             local holder = library:create("Frame", {
                 Parent = items["watermark_frame"];
                 BackgroundTransparency = 1;
-                Size = dim2(0, 0, 1, 0);
+                Size = dim2(0, 0, 0, 28);
                 AutomaticSize = Enum.AutomaticSize.X;
                 BorderSizePixel = 0;
                 BackgroundColor3 = rgb(255, 255, 255);
@@ -3920,9 +3920,10 @@ library:create( "UIPadding" , {
                     Parent = holder;
                     Image = "rbxassetid://" .. icon_id;
                     ImageColor3 = themes.preset.text;
-                    Size = dim2(0, 14, 0, 14);
+                    Size = dim2(0, 16, 0, 16);
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
+                    ScaleType = Enum.ScaleType.Fit;
                     BackgroundColor3 = rgb(255, 255, 255);
                     LayoutOrder = 1;
                 });
@@ -3935,7 +3936,7 @@ library:create( "UIPadding" , {
                 Text = text_str;
                 TextColor3 = themes.preset.text;
                 TextSize = 13;
-                Size = dim2(0, 0, 1, 0);
+                Size = dim2(0, 0, 0, 28);
                 AutomaticSize = Enum.AutomaticSize.X;
                 BackgroundTransparency = 1;
                 BorderSizePixel = 0;
