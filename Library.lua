@@ -3984,15 +3984,15 @@ library:create( "UIPadding" , {
         make_divider(2)
 
         -- Game name with controller icon
-        local _, game_lbl = make_segment("11522971482", cfg.game_name, 3)
+        local _, game_lbl = make_segment("11522971436", cfg.game_name, 3)
         make_divider(4)
 
         -- Ping with wifi icon
-        local _, ping_lbl = make_segment("96448345234387", "0ms", 5)
+        local _, ping_lbl = make_segment("105127187178989", "0ms", 5)
         make_divider(6)
 
         -- FPS with monitor/computer icon
-        local _, fps_lbl = make_segment("12684119292", "0 fps", 7)
+        local _, fps_lbl = make_segment("12684119225", "0 fps", 7)
 
         -- Dragging
         local dragging = false
