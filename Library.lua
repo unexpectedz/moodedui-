@@ -3844,14 +3844,14 @@ library:create( "UIPadding" , {
 
         local items = cfg.items
 
-        items["watermark_frame"] = library:create("Frame", {
+items["watermark_frame"] = library:create("Frame", {
             Parent = library["items"];
             Name = "\0";
             Position = dim2(0, 10, 0, 10);
             Size = dim2(0, 0, 0, 28);
             BorderSizePixel = 0;
             BackgroundColor3 = rgb(19, 19, 21);
-            AutomaticSize = Enum.AutomaticSize.X;
+            AutomaticSize = Enum.AutomaticSize.XY;
             ClipsDescendants = false;
         });
 
