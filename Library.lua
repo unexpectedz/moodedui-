@@ -462,6 +462,7 @@ local function make_gradient_color(c)
 end
 
 local title_gradients = {}
+local keybind_registry = {}
 
 function library:update_theme(theme, color)
     for _, property in themes.utility[theme] do 
@@ -3618,8 +3619,12 @@ local cp_menu = library:create("Frame", {
                 end
             end)
             
-            cfg.set({mode = cfg.mode, active = cfg.active, key = cfg.key})           
+cfg.set({mode = cfg.mode, active = cfg.active, key = cfg.key})           
             config_flags[cfg.flag] = cfg.set
+
+            if cfg.name then
+                table.insert(keybind_registry, cfg)
+            end
 
             return setmetatable(cfg, library)
         end
@@ -4335,5 +4340,221 @@ make_divider(6)
     end
 --
 
+
+-- Keybind List
+    function library:keybind_list()
+        local kb_screen = library:create("ScreenGui", {
+            Parent = coregui;
+            Name = "\0";
+            Enabled = true;
+            ZIndexBehavior = Enum.ZIndexBehavior.Global;
+            IgnoreGuiInset = true;
+        });
+
+        local kb_frame = library:create("Frame", {
+            Parent = kb_screen;
+            Name = "\0";
+            Position = dim2(0, 20, 0, 200);
+            Size = dim2(0, 220, 0, 0);
+            AutomaticSize = Enum.AutomaticSize.Y;
+            BackgroundColor3 = rgb(19, 19, 21);
+            BorderSizePixel = 0;
+        });
+
+        library:create("UICorner", {
+            Parent = kb_frame;
+            CornerRadius = dim(0, 7)
+        });
+
+        library:create("UIStroke", {
+            Parent = kb_frame;
+            Color = rgb(23, 23, 29);
+            Thickness = 1;
+            ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        });
+
+        library:create("UIPadding", {
+            Parent = kb_frame;
+            PaddingLeft = dim(0, 10);
+            PaddingRight = dim(0, 10);
+            PaddingTop = dim(0, 8);
+            PaddingBottom = dim(0, 8);
+        });
+
+        local kb_layout = library:create("UIListLayout", {
+            Parent = kb_frame;
+            FillDirection = Enum.FillDirection.Vertical;
+            SortOrder = Enum.SortOrder.LayoutOrder;
+            Padding = dim(0, 6);
+        });
+
+        -- Title row
+        local title_row = library:create("Frame", {
+            Parent = kb_frame;
+            BackgroundTransparency = 1;
+            BorderSizePixel = 0;
+            Size = dim2(1, 0, 0, 20);
+            AutomaticSize = Enum.AutomaticSize.X;
+            LayoutOrder = 0;
+        });
+
+        library:create("UIListLayout", {
+            Parent = title_row;
+            FillDirection = Enum.FillDirection.Horizontal;
+            VerticalAlignment = Enum.VerticalAlignment.Center;
+            SortOrder = Enum.SortOrder.LayoutOrder;
+            Padding = dim(0, 6);
+        });
+
+        local kb_icon = library:create("ImageLabel", {
+            Parent = title_row;
+            Image = "rbxassetid://131460366120428";
+            Size = dim2(0, 16, 0, 16);
+            BackgroundTransparency = 1;
+            BorderSizePixel = 0;
+            ImageColor3 = themes.preset.accent;
+            LayoutOrder = 1;
+        }); library:apply_theme(kb_icon, "accent", "ImageColor3");
+
+        local kb_title = library:create("TextLabel", {
+            Parent = title_row;
+            FontFace = fonts.font;
+            Text = "Keybind List";
+            TextColor3 = rgb(255, 255, 255);
+            TextSize = 13;
+            BackgroundTransparency = 1;
+            BorderSizePixel = 0;
+            AutomaticSize = Enum.AutomaticSize.XY;
+            LayoutOrder = 2;
+            BackgroundColor3 = rgb(255, 255, 255);
+        });
+
+        library:create("Frame", {
+            Parent = kb_frame;
+            Size = dim2(1, 0, 0, 1);
+            BackgroundColor3 = rgb(35, 35, 37);
+            BorderSizePixel = 0;
+            LayoutOrder = 1;
+        });
+
+        -- Keybind rows container
+        local rows_frame = library:create("Frame", {
+            Parent = kb_frame;
+            BackgroundTransparency = 1;
+            BorderSizePixel = 0;
+            Size = dim2(1, 0, 0, 0);
+            AutomaticSize = Enum.AutomaticSize.Y;
+            LayoutOrder = 2;
+        });
+
+        library:create("UIListLayout", {
+            Parent = rows_frame;
+            FillDirection = Enum.FillDirection.Vertical;
+            SortOrder = Enum.SortOrder.LayoutOrder;
+            Padding = dim(0, 4);
+        });
+
+        -- Dragging
+        local dragging = false
+        local drag_start
+        local start_pos
+
+        kb_frame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                drag_start = input.Position
+                start_pos = kb_frame.Position
+            end
+        end)
+
+        kb_frame.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = false
+            end
+        end)
+
+        library:connection(uis.InputChanged, function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                local delta = input.Position - drag_start
+                local vp = camera.ViewportSize
+                local new_x = math.clamp(start_pos.X.Offset + delta.X, 0, vp.X - kb_frame.AbsoluteSize.X)
+                local new_y = math.clamp(start_pos.Y.Offset + delta.Y, 0, vp.Y - kb_frame.AbsoluteSize.Y)
+                library:tween(kb_frame, {Position = dim2(0, new_x, 0, new_y)}, Enum.EasingStyle.Linear, 0.05)
+            end
+        end)
+
+        -- Update loop
+        library:connection(run.Heartbeat, function()
+            -- clear old rows
+            for _, child in rows_frame:GetChildren() do
+                if not child:IsA("UIListLayout") then
+                    child:Destroy()
+                end
+            end
+
+            local has_any = false
+
+            for _, kb in keybind_registry do
+                local key = kb.key
+                local mode = kb.mode
+
+                if not key or tostring(key) == "Enums" or key == "NONE" then continue end
+
+                has_any = true
+
+                local text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
+
+                local row = library:create("Frame", {
+                    Parent = rows_frame;
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    Size = dim2(1, 0, 0, 0);
+                    AutomaticSize = Enum.AutomaticSize.Y;
+                });
+
+                library:create("UIListLayout", {
+                    Parent = row;
+                    FillDirection = Enum.FillDirection.Horizontal;
+                    VerticalAlignment = Enum.VerticalAlignment.Center;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    HorizontalFlex = Enum.UIFlexAlignment.Fill;
+                });
+
+                library:create("TextLabel", {
+                    Parent = row;
+                    FontFace = fonts.small;
+                    Text = kb.name;
+                    TextColor3 = rgb(200, 200, 200);
+                    TextSize = 13;
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.XY;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    LayoutOrder = 1;
+                    BackgroundColor3 = rgb(255, 255, 255);
+                });
+
+                local accent_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
+
+                library:create("TextLabel", {
+                    Parent = row;
+                    FontFace = fonts.font;
+                    Text = '<font color="#' .. accent_hex .. '">' .. text .. '</font> <font color="#606060">(' .. mode .. ')</font>';
+                    RichText = true;
+                    TextColor3 = rgb(255, 255, 255);
+                    TextSize = 13;
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.XY;
+                    TextXAlignment = Enum.TextXAlignment.Right;
+                    LayoutOrder = 2;
+                    BackgroundColor3 = rgb(255, 255, 255);
+                });
+            end
+
+            kb_frame.Visible = has_any
+        end)
+    end
+--
 
 return library
