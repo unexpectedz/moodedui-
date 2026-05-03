@@ -482,13 +482,11 @@ function library:update_theme(theme, color)
 
     themes.preset[theme] = color 
 
-    for _, gradient in title_gradients do
-        if gradient and gradient.Parent then
-gradient.Color = make_gradient_color(color)
+for _, gradient in title_gradients do
+        if gradient and gradient.update then
+            gradient.update()
         end
     end
-end
-
         function library:connection(signal, callback)
             local connection = signal:Connect(callback)
             
@@ -645,10 +643,9 @@ local main_stroke = library:create( "UIStroke" , {
 items[ "title" ] = library:create( "TextLabel" , {
     FontFace = fonts.font;
     BorderColor3 = rgb(0, 0, 0);
-    Text = name;
     Parent = items[ "side_frame" ];
     Name = "__title";
-    Text = cfg.name .. cfg.suffix;
+    Text = "";
     BackgroundTransparency = 1;
     Size = dim2(1, 0, 0, 70);
     TextColor3 = rgb(255, 255, 255);
@@ -658,19 +655,14 @@ items[ "title" ] = library:create( "TextLabel" , {
     BackgroundColor3 = rgb(255, 255, 255)
 });
 
-local function make_gradient_color(c)
-    local h, s, v = c:ToHSV()
-    local lighter = hsv(h, s * 0.3, math.min(v + 0.4, 1))
-    return rgbseq{rgbkey(0, c), rgbkey(1, lighter)}
+local function update_title()
+    local accent = themes.preset.accent
+    local hex_color = string.format("#%02x%02x%02x", math.floor(accent.R*255), math.floor(accent.G*255), math.floor(accent.B*255))
+    items["title"].Text = '<font color="#ffffff">' .. cfg.name .. '</font><font color="' .. hex_color .. '">' .. cfg.suffix .. '</font>'
 end
 
-items[ "title_gradient" ] = library:create( "UIGradient" , {
-    Parent = items[ "title" ];
-    Color = make_gradient_color(themes.preset.accent);
-    Rotation = 0;
-});
-
-table.insert(title_gradients, items[ "title_gradient" ])
+update_title()
+table.insert(title_gradients, {update = update_title})
                 
                 items[ "multi_holder" ] = library:create( "Frame" , {
                     Parent = items[ "main" ];
