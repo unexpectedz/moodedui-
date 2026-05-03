@@ -786,7 +786,7 @@ do -- Other
                 library:resizify(items[ "main" ])
             end
 
-            local cursor = library:create("ImageLabel", {
+local cursor = library:create("ImageLabel", {
                 Parent = library["items"];
                 Image = "rbxassetid://125472748006777";
                 Size = dim2(0, 24, 0, 24);
@@ -795,18 +795,19 @@ do -- Other
                 ZIndex = 9999;
                 ImageColor3 = themes.preset.accent;
                 Visible = false;
+                AnchorPoint = vec2(0, 0);
             });
             library:apply_theme(cursor, "accent", "ImageColor3")
 
             library:connection(run.RenderStepped, function()
                 if library["items"].Enabled then
                     local mouse_pos = uis:GetMouseLocation()
-                    cursor.Position = dim_offset(mouse_pos.X, mouse_pos.Y - gui_offset)
+                    cursor.Position = dim_offset(mouse_pos.X, mouse_pos.Y)
                     cursor.Visible = true
-                    game:GetService("UserInputService").MouseIconEnabled = false
+                    uis.MouseIconEnabled = false
                 else
                     cursor.Visible = false
-                    game:GetService("UserInputService").MouseIconEnabled = true
+                    uis.MouseIconEnabled = true
                 end
             end)
 
