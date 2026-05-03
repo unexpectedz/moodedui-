@@ -2259,51 +2259,55 @@ items[ "value" ].InputBegan:Connect(function(input)
                         SortOrder = Enum.SortOrder.LayoutOrder
                     });
                     
-                    items[ "dropdown" ] = library:create( "TextButton" , {
+items[ "dropdown" ] = library:create( "TextButton" , {
                         FontFace = fonts.small;
                         TextColor3 = rgb(0, 0, 0);
                         BorderColor3 = rgb(0, 0, 0);
                         Text = "";
                         AutoButtonColor = false;
-                        AnchorPoint = vec2(1, 0);
-                        Parent = items[ "right_components" ];
+                        Parent = items[ "dropdown_object" ];
                         Name = "\0";
-                        Position = dim2(1, 0, 0, 0);
-                        Size = dim2(0, cfg.width, 0, 16);
+                        Position = dim2(0, 4, 0, 23);
+                        Size = dim2(1, -8, 0, 14);
                         BorderSizePixel = 0;
                         TextSize = 14;
-                        BackgroundColor3 = rgb(33, 33, 35)
+                        BackgroundColor3 = rgb(22, 22, 24)
                     });
-                    
+
                     library:create( "UICorner" , {
                         Parent = items[ "dropdown" ];
-                        CornerRadius = dim(0, 4)
+                        CornerRadius = dim(0, 3)
                     });
-                    
+
+                    library:create( "UIStroke" , {
+                        Parent = items[ "dropdown" ];
+                        Color = rgb(40, 40, 42);
+                        Thickness = 1;
+                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                    });
+
                     items[ "sub_text" ] = library:create( "TextLabel" , {
                         FontFace = fonts.small;
                         TextColor3 = rgb(86, 86, 87);
                         BorderColor3 = rgb(0, 0, 0);
-                        Text = "awdawdawdawdawdawdawdaw";
+                        Text = "";
                         Parent = items[ "dropdown" ];
                         Name = "\0";
-                        Size = dim2(1, -12, 0, 0);
+                        Size = dim2(1, -12, 1, 0);
                         BorderSizePixel = 0;
                         BackgroundTransparency = 1;
                         TextXAlignment = Enum.TextXAlignment.Left;
                         TextTruncate = Enum.TextTruncate.AtEnd;
-                        AutomaticSize = Enum.AutomaticSize.Y;
                         TextSize = 14;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
-                    
+
                     library:create( "UIPadding" , {
                         Parent = items[ "sub_text" ];
-                        PaddingTop = dim(0, 1);
-                        PaddingRight = dim(0, 5);
-                        PaddingLeft = dim(0, 5)
+                        PaddingLeft = dim(0, 5);
+                        PaddingRight = dim(0, 5)
                     });
-                    
+
                     items[ "indicator" ] = library:create( "ImageLabel" , {
                         ImageColor3 = rgb(86, 86, 87);
                         BorderColor3 = rgb(0, 0, 0);
@@ -2317,7 +2321,6 @@ items[ "value" ].InputBegan:Connect(function(input)
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
-                -- 
 
                 -- Element Holder
                     items[ "dropdown_holder" ] = library:create( "Frame" , {
@@ -2455,7 +2458,7 @@ items[ "value" ].InputBegan:Connect(function(input)
                 end
             end
 
-            items[ "dropdown" ].MouseButton1Click:Connect(function()
+            items[ "dropdown_object" ].MouseButton1Click:Connect(function()
                 cfg.open = not cfg.open 
                 
                 cfg.set_visible(cfg.open)
@@ -3352,12 +3355,12 @@ local cp_menu = library:create("Frame", {
                         PaddingLeft = dim(0, 5)
                     });
                     
-                    items[ "right_components" ] = library:create( "Frame" , {
-                        Parent = items[ "keybind_element" ];
+items[ "right_components" ] = library:create( "Frame" , {
+                        Parent = items[ "dropdown_object" ];
                         Name = "\0";
                         Position = dim2(1, 0, 0, 0);
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(0, 0, 1, 0);
+                        Size = dim2(0, 0, 0, 0);
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
