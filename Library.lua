@@ -3622,8 +3622,13 @@ local cp_menu = library:create("Frame", {
 cfg.set({mode = cfg.mode, active = cfg.active, key = cfg.key})           
             config_flags[cfg.flag] = cfg.set
 
-            if cfg.name then
+if cfg.name then
                 table.insert(keybind_registry, cfg)
+                cfg._refresh_kb = function()
+                    if getgenv()._kb_refresh then
+                        getgenv()._kb_refresh()
+                    end
+                end
             end
 
             return setmetatable(cfg, library)
@@ -4351,7 +4356,7 @@ make_divider(6)
             IgnoreGuiInset = true;
         });
 
-        local kb_frame = library:create("Frame", {
+local kb_frame = library:create("Frame", {
             Parent = kb_screen;
             Name = "\0";
             Position = dim2(0, 20, 0, 200);
@@ -4359,8 +4364,9 @@ make_divider(6)
             AutomaticSize = Enum.AutomaticSize.Y;
             BackgroundColor3 = rgb(19, 19, 21);
             BorderSizePixel = 0;
+            Visible = true;
+            ClipsDescendants = false;
         });
-
         library:create("UICorner", {
             Parent = kb_frame;
             CornerRadius = dim(0, 7)
@@ -4553,7 +4559,8 @@ local row_instances = {}
             end
         end
 
-        refresh_keybind_list()
+        task.delay(0.5, refresh_keybind_list)
+        getgenv()._kb_refresh = refresh_keybind_list
 
         library:connection(run.Heartbeat, function()
             for _, kb in keybind_registry do
