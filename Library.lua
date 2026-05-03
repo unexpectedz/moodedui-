@@ -2970,16 +2970,14 @@ items[ "colorpicker" ].MouseButton1Click:Connect(function()
                 cfg.set_visible(cfg.open)            
             end)
 
-            local copied_color = nil
-
-            local cp_menu = library:create("Frame", {
+local cp_menu = library:create("Frame", {
                 Parent = library["items"];
                 Name = "\0";
-                Size = dim2(0, 100, 0, 0);
+                Size = dim2(0, 110, 0, 0);
                 BackgroundColor3 = rgb(22, 22, 24);
                 BorderSizePixel = 0;
                 ClipsDescendants = true;
-                ZIndex = 9999;
+                ZIndex = 10000;
                 Visible = true;
             });
 
@@ -3006,16 +3004,16 @@ items[ "colorpicker" ].MouseButton1Click:Connect(function()
                     Parent = cp_menu;
                     FontFace = fonts.small;
                     Text = text;
-                    TextColor3 = rgb(200, 200, 200);
+                    TextColor3 = rgb(160, 160, 160);
                     TextSize = 13;
-                    Size = dim2(1, 0, 0, 22);
+                    Size = dim2(1, 0, 0, 24);
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
                     AutoButtonColor = false;
                     TextXAlignment = Enum.TextXAlignment.Left;
-                    ZIndex = 9999;
+                    ZIndex = 10000;
                     LayoutOrder = order;
-                    BackgroundColor3 = rgb(22, 22, 24);
+                    BackgroundColor3 = rgb(35, 35, 37);
                 });
 
                 library:create("UIPadding", {
@@ -3024,27 +3022,28 @@ items[ "colorpicker" ].MouseButton1Click:Connect(function()
                 });
 
                 btn.MouseEnter:Connect(function()
+                    btn.TextColor3 = rgb(245, 245, 245)
                     library:tween(btn, {BackgroundTransparency = 0}, Enum.EasingStyle.Quad, 0.1)
                 end)
 
                 btn.MouseLeave:Connect(function()
+                    btn.TextColor3 = rgb(160, 160, 160)
                     library:tween(btn, {BackgroundTransparency = 1}, Enum.EasingStyle.Quad, 0.1)
                 end)
 
                 btn.MouseButton1Click:Connect(function()
                     callback()
-                    library:tween(cp_menu, {Size = dim2(0, 100, 0, 0)}, Enum.EasingStyle.Quad, 0.15)
+                    cp_menu.Size = dim2(0, 110, 0, 0)
                 end)
 
                 return btn
             end
 
             make_cp_button("Copy colour", 1, function()
-                copied_color = {
+                getgenv().cp_clipboard = {
                     Color = flags[cfg.flag].Color;
                     Transparency = flags[cfg.flag].Transparency;
                 }
-                getgenv().cp_clipboard = copied_color
             end)
 
             make_cp_button("Paste colour", 2, function()
@@ -3054,18 +3053,20 @@ items[ "colorpicker" ].MouseButton1Click:Connect(function()
             end)
 
             items[ "colorpicker" ].MouseButton2Click:Connect(function()
-                cp_menu.Position = dim_offset(items["colorpicker"].AbsolutePosition.X - 50, items["colorpicker"].AbsolutePosition.Y + 20)
-                library:tween(cp_menu, {Size = dim2(0, 100, 0, 44)}, Enum.EasingStyle.Quad, 0.15)
+                cp_menu.Position = dim_offset(
+                    items["colorpicker"].AbsolutePosition.X - 55,
+                    items["colorpicker"].AbsolutePosition.Y + 22
+                )
+                cp_menu.Size = dim2(0, 110, 0, 48)
             end)
 
             library:connection(uis.InputBegan, function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
                     if not library:mouse_in_frame(cp_menu) then
-                        library:tween(cp_menu, {Size = dim2(0, 100, 0, 0)}, Enum.EasingStyle.Quad, 0.15)
+                        cp_menu.Size = dim2(0, 110, 0, 0)
                     end
                 end
             end)
-
             uis.InputChanged:Connect(function(input)
                 if (dragging_sat or dragging_hue or dragging_alpha) and input.UserInputType == Enum.UserInputType.MouseMovement then
                     cfg.update_color() 
