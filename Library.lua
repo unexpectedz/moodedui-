@@ -784,7 +784,31 @@ items[ "other_info" ] = library:create( "TextLabel" , {
 do -- Other
                 library:draggify(items[ "main" ])
                 library:resizify(items[ "main" ])
-            end 
+            end
+
+            local cursor = library:create("ImageLabel", {
+                Parent = library["items"];
+                Image = "rbxassetid://125472748006777";
+                Size = dim2(0, 24, 0, 24);
+                BackgroundTransparency = 1;
+                BorderSizePixel = 0;
+                ZIndex = 9999;
+                ImageColor3 = themes.preset.accent;
+                Visible = false;
+            });
+            library:apply_theme(cursor, "accent", "ImageColor3")
+
+            library:connection(run.RenderStepped, function()
+                if library["items"].Enabled then
+                    local mouse_pos = uis:GetMouseLocation()
+                    cursor.Position = dim_offset(mouse_pos.X, mouse_pos.Y - gui_offset)
+                    cursor.Visible = true
+                    game:GetService("UserInputService").MouseIconEnabled = false
+                else
+                    cursor.Visible = false
+                    game:GetService("UserInputService").MouseIconEnabled = true
+                end
+            end)
 
             -- Loading Screen
             local loading_frame = library:create("Frame", {
