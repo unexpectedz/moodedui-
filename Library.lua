@@ -3901,31 +3901,52 @@ local cp_menu = library:create("Frame", {
             
             local column = main:column({})
             local section = column:section({name = "Configs", size = 1, default = true, icon = "rbxassetid://139628202576511"})
-            config_holder = section:list({options = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) end, flag = "config_name_list"}); library:update_config_list()
+            config_holder = section:list({options = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) print("selected config: " .. tostring(option)) end, flag = "config_name_list"}); library:update_config_list()
             
             local column = main:column({})
             local section = column:section({name = "Settings", side = "right", size = 1, default = true, icon = "rbxassetid://129380150574313"})
             section:textbox({name = "Config name:", flag = "config_name_text"})
-section:button({name = "Save", callback = function()
-                local name = flags["config_name_text"] ~= "" and flags["config_name_text"] or flags["config_name_list"]
-                if not name or name == "" then return end
-                writefile(library.directory .. "/configs/" .. name .. ".cfg", library:get_config())
+local function cfg_path(name)
+                if not isfolder(library.directory) then makefolder(library.directory) end
+                if not isfolder(library.directory .. "/configs") then makefolder(library.directory .. "/configs") end
+                return library.directory .. "/configs/" .. name .. ".cfg"
+            end
+
+            section:button({name = "Save", callback = function()
+                local name = (flags["config_name_text"] and flags["config_name_text"] ~= "") and flags["config_name_text"] or flags["config_name_list"]
+                if not name or name == "" then
+                    notifications:create_notification({name = "Configs", info = "Enter a config name first!"})
+                    return
+                end
+                writefile(cfg_path(name), library:get_config())
                 library:update_config_list()
                 notifications:create_notification({name = "Configs", info = "Saved config:\n" .. name})
             end})
             section:button({name = "Load", callback = function()
                 local name = flags["config_name_list"]
-                if not name or name == "" then return end
-                local path = library.directory .. "/configs/" .. name .. ".cfg"
-                if not isfile(path) then return end
+                if not name or name == "" then
+                    notifications:create_notification({name = "Configs", info = "Select a config first!"})
+                    return
+                end
+                local path = cfg_path(name)
+                if not isfile(path) then
+                    notifications:create_notification({name = "Configs", info = "Config not found:\n" .. name})
+                    return
+                end
                 library:load_config(readfile(path))
                 notifications:create_notification({name = "Configs", info = "Loaded config:\n" .. name})
             end})
             section:button({name = "Delete", callback = function()
                 local name = flags["config_name_list"]
-                if not name or name == "" then return end
-                local path = library.directory .. "/configs/" .. name .. ".cfg"
-                if not isfile(path) then return end
+                if not name or name == "" then
+                    notifications:create_notification({name = "Configs", info = "Select a config first!"})
+                    return
+                end
+                local path = cfg_path(name)
+                if not isfile(path) then
+                    notifications:create_notification({name = "Configs", info = "Config not found:\n" .. name})
+                    return
+                end
                 delfile(path)
                 library:update_config_list()
                 notifications:create_notification({name = "Configs", info = "Deleted config:\n" .. name})
