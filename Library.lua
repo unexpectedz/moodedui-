@@ -2120,10 +2120,12 @@ library:connection(uis.InputEnded, function(input)
                 PaddingLeft = dim(0, 5);
             });
 
-            items[ "value" ].MouseButton1Click:Connect(function()
-                items[ "value" ].Visible = false
-                value_box.Visible = true
-                value_box:CaptureFocus()
+items[ "value" ].InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    items[ "value" ].Visible = false
+                    value_box.Visible = true
+                    value_box:CaptureFocus()
+                end
             end)
 
             value_box.FocusLost:Connect(function(entered)
@@ -3909,7 +3911,9 @@ local cp_menu = library:create("Frame", {
 local function cfg_path(name)
                 if not isfolder(library.directory) then makefolder(library.directory) end
                 if not isfolder(library.directory .. "/configs") then makefolder(library.directory .. "/configs") end
-                return library.directory .. "/configs/" .. name .. ".cfg"
+                local path = library.directory .. "/configs/" .. name .. ".cfg"
+                print("cfg path: " .. path .. " | exists: " .. tostring(isfile(path)))
+                return path
             end
 
             section:button({name = "Save", callback = function()
