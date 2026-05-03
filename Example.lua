@@ -1,4 +1,15 @@
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/unexpectedz/moodedui-/refs/heads/main/Library.lua"))()
+local src
+local ok
+repeat
+    ok, src = pcall(game.HttpGet, game, "https://raw.githubusercontent.com/unexpectedz/moodedui-/refs/heads/main/Library.lua")
+    if not ok or not src or src == "" then 
+        task.wait(0.5) 
+    end
+until ok and src and src ~= ""
+
+local fn, err = loadstring(src)
+if not fn then error("Syntax error in library: " .. tostring(err)) end
+local library = fn()
 
 --[[
   This ui uses a column way of creating holders for sections, its a bit confusing for newbies so heres an easy explanation:
@@ -10,6 +21,10 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/unexp
 
 local window = library:window({name = "vio", suffix = "sploit", gameInfo = "Milenium for Counter-Strike: Global Offensive"})
 
+library:keybind_list()
+print("keybind list called")
+
+print("keybind list called")
 window.set_loading(0.3, "loading assets...")
 task.wait(0.5)
 window.set_loading(0.6, "loading script...")
@@ -18,7 +33,8 @@ window.set_loading(1, "done!")
 window.finish_loading()
 
 local wm = library:watermark({
-    name = "viosploit",
+    name = "vio",
+    suffix = "sploit",
     game_name = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 })
 
