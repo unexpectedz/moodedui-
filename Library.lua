@@ -4498,13 +4498,12 @@ local row_instances = {}
             row_instances = {}
 
 for _, kb in keybind_registry do
-                if kb.kb_label and kb.kb_label.Parent then
-                    local key = kb.key
-                    local mode = kb.mode
-                    if not key or key == "NONE" or tostring(key) == "Enums" then
-                        continue
-                    end
-                    local text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
+                local key = kb.key
+                local mode = kb.mode
+
+                if not key or key == "NONE" or tostring(key) == "Enums" then continue end
+
+                local text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
 
                 local row = library:create("Frame", {
                     Parent = rows_frame;
@@ -4568,19 +4567,14 @@ getgenv()._kb_refresh = refresh_keybind_list
         end)
 
 library:connection(run.Heartbeat, function()
-for _, kb in keybind_registry do
+            for _, kb in keybind_registry do
+                if not kb.kb_label or not kb.kb_label.Parent then continue end
                 local key = kb.key
                 local mode = kb.mode
-
-                if not key or key == "NONE" or tostring(key) == "Enums" then
-                    continue
-                end
-
+                if not key or key == "NONE" or tostring(key) == "Enums" then continue end
                 local text = keys[key] or tostring(key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", "")
-                    end
-                    local accent_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
-                    kb.kb_label.Text = '<font color="#' .. accent_hex .. '">' .. text .. '</font> <font color="#606060">(' .. mode .. ')</font>'
-                end
+                local accent_hex = string.format("%02X%02X%02X", math.floor(themes.preset.accent.R*255), math.floor(themes.preset.accent.G*255), math.floor(themes.preset.accent.B*255))
+                kb.kb_label.Text = '<font color="#' .. accent_hex .. '">' .. text .. '</font> <font color="#606060">(' .. mode .. ')</font>'
             end
         end)
 
