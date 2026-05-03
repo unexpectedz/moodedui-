@@ -4013,84 +4013,116 @@ end
                 outline;
             }
 
-local items = cfg.items; do 
+local items = cfg.items; do
                 items[ "notification" ] = library:create( "Frame" , {
                     Parent = library[ "items" ];
-                    Size = dim2(0, 220, 0, 0);
+                    Size = dim2(0, 0, 0, 36);
                     Name = "\0";
-                    BorderColor3 = rgb(0, 0, 0);
                     BorderSizePixel = 0;
                     BackgroundTransparency = 0;
-                    AnchorPoint = vec2(1, 0);
-                    AutomaticSize = Enum.AutomaticSize.Y;
+                    AnchorPoint = vec2(0, 0);
+                    AutomaticSize = Enum.AutomaticSize.X;
                     BackgroundColor3 = rgb(19, 19, 21)
                 });
 
-library:create( "UICorner" , {
-    Parent = items[ "notification" ];
-    CornerRadius = dim(0, 7)
-});
+                library:create( "UICorner" , {
+                    Parent = items[ "notification" ];
+                    CornerRadius = dim(0, 7)
+                });
 
-library:create( "UIStroke" , {
-    Color = rgb(23, 23, 29);
-    Parent = items[ "notification" ];
-    Transparency = 0;
-    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-});
+                library:create( "UIStroke" , {
+                    Color = rgb(23, 23, 29);
+                    Parent = items[ "notification" ];
+                    Transparency = 0;
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+                });
 
-items[ "accent_bar" ] = library:create( "Frame" , {
-    Parent = items[ "notification" ];
-    Name = "\0";
-    Position = dim2(0, 0, 0, 0);
-    BorderColor3 = rgb(0, 0, 0);
-    Size = dim2(0, 3, 1, 0);
-    BorderSizePixel = 0;
-    BackgroundColor3 = themes.preset.accent;
-}); library:apply_theme(items[ "accent_bar" ], "accent", "BackgroundColor3");
+                library:create( "UIPadding" , {
+                    Parent = items[ "notification" ];
+                    PaddingLeft = dim(0, 10);
+                    PaddingRight = dim(0, 10);
+                    PaddingTop = dim(0, 6);
+                    PaddingBottom = dim(0, 6);
+                });
 
-library:create( "UICorner" , {
-    Parent = items[ "accent_bar" ];
-    CornerRadius = dim(0, 999)
-});
+                library:create( "UIListLayout" , {
+                    Parent = items[ "notification" ];
+                    FillDirection = Enum.FillDirection.Horizontal;
+                    VerticalAlignment = Enum.VerticalAlignment.Center;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    Padding = dim(0, 8);
+                });
 
-items[ "title" ] = library:create( "TextLabel" , {
-    FontFace = fonts.font;
-    TextColor3 = rgb(255, 255, 255);
-    BorderColor3 = rgb(0, 0, 0);
-    Text = cfg.name;
-    Parent = items[ "notification" ];
-    Name = "\0";
-    BackgroundTransparency = 1;
-    Position = dim2(0, 14, 0, 8);
-    BorderSizePixel = 0;
-    AutomaticSize = Enum.AutomaticSize.XY;
-    TextSize = 14;
-    BackgroundColor3 = rgb(255, 255, 255)
-});
+                local icon = library:create( "ImageLabel" , {
+                    Parent = items[ "notification" ];
+                    Image = "rbxassetid://93118089900750";
+                    Size = dim2(0, 16, 0, 16);
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    ImageColor3 = themes.preset.accent;
+                    LayoutOrder = 1;
+                }); library:apply_theme(icon, "accent", "ImageColor3");
 
-items[ "info" ] = library:create( "TextLabel" , {
-    FontFace = fonts.small;
-    TextColor3 = rgb(100, 100, 100);
-    BorderColor3 = rgb(0, 0, 0);
-    Text = cfg.info;
-    Parent = items[ "notification" ];
-    Name = "\0";
-    Position = dim2(0, 14, 0, 24);
-    BorderSizePixel = 0;
-    BackgroundTransparency = 1;
-    TextXAlignment = Enum.TextXAlignment.Left;
-    TextWrapped = true;
-    Size = dim2(1, -22, 0, 0);
-    AutomaticSize = Enum.AutomaticSize.Y;
-    TextSize = 13;
-    BackgroundColor3 = rgb(255, 255, 255)
-});
+                local divider = library:create( "Frame" , {
+                    Parent = items[ "notification" ];
+                    Size = dim2(0, 1, 0, 14);
+                    BackgroundColor3 = rgb(50, 50, 52);
+                    BorderSizePixel = 0;
+                    LayoutOrder = 2;
+                });
 
-library:create( "UIPadding" , {
-    PaddingBottom = dim(0, 10);
-    PaddingTop = dim(0, 4);
-    Parent = items[ "notification" ]
-});
+                local text_holder = library:create( "Frame" , {
+                    Parent = items[ "notification" ];
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    Size = dim2(0, 0, 0, 20);
+                    AutomaticSize = Enum.AutomaticSize.X;
+                    LayoutOrder = 3;
+                });
+
+                library:create( "UIListLayout" , {
+                    Parent = text_holder;
+                    FillDirection = Enum.FillDirection.Horizontal;
+                    VerticalAlignment = Enum.VerticalAlignment.Center;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    Padding = dim(0, 4);
+                });
+
+                items[ "title" ] = library:create( "TextLabel" , {
+                    FontFace = fonts.font;
+                    TextColor3 = rgb(255, 255, 255);
+                    Text = cfg.name;
+                    Parent = text_holder;
+                    Name = "\0";
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.XY;
+                    TextSize = 13;
+                    BackgroundColor3 = rgb(255, 255, 255);
+                    LayoutOrder = 1;
+                });
+
+                local divider2 = library:create( "Frame" , {
+                    Parent = text_holder;
+                    Size = dim2(0, 1, 0, 14);
+                    BackgroundColor3 = rgb(50, 50, 52);
+                    BorderSizePixel = 0;
+                    LayoutOrder = 2;
+                });
+
+                items[ "info" ] = library:create( "TextLabel" , {
+                    FontFace = fonts.small;
+                    TextColor3 = rgb(130, 130, 130);
+                    Text = cfg.info;
+                    Parent = text_holder;
+                    Name = "\0";
+                    BorderSizePixel = 0;
+                    BackgroundTransparency = 1;
+                    AutomaticSize = Enum.AutomaticSize.XY;
+                    TextSize = 13;
+                    BackgroundColor3 = rgb(255, 255, 255);
+                    LayoutOrder = 3;
+                });
             end
             
             local index = #notifications.notifs + 1
